@@ -1,0 +1,18 @@
+# Render Deployment Blueprint
+services:
+  - type: web
+    name: hotel-management-app
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: "npm run postinstall"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+    disk:
+      name: data
+      mountPath: /var/data
+      sizeGB: 1

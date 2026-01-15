@@ -1,0 +1,29 @@
+/* ================================================================== */
+/* ダッシュボードページのスタイル                                       */
+/* Styles for the Dashboard Page                                    */
+/* ================================================================== */
+
+.dashboardLayout {
+    min-height: 100vh;
+}
+
+.sider {
+    padding: 24px;
+    border-right: 1px solid #f0f0f0;
+    background-color: #ffffff !important;
+}
+
+.content {
+    padding: 24px;
+    background-color: #f0f2f5;
+}
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 991px) {
+    .content {
+        padding: 16px;
+    }
+}

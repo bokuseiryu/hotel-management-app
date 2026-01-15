@@ -1,0 +1,29 @@
+/* ================================================================== */
+/* サマリーカードのスタイル                                             */
+/* Styles for the Summary Cards                                     */
+/* ================================================================== */
+
+.summaryContainer {
+    margin-bottom: 24px;
+}
+
+.summaryCard {
+    border: 1px solid #d9d9d9; /* 強調のためのボーダー */
+    box-shadow: none; /* シンプルなスタイルのため影を削除 */
+}
+
+.summaryCard :global(.ant-statistic-title) {
+    font-size: 16px;
+    color: #595959;
+}
+
+.summaryCard :global(.ant-statistic-content) {
+    font-size: 30px !important; /* フォントを拡大 */
+    font-weight: bold !important; /* フォントを太字に */
+}
+
+.rateCard :global(.ant-statistic-content) {
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}

@@ -1,0 +1,38 @@
+/* ================================================================== */
+/* 日報リストのスタイル                                                 */
+/* Styles for the Reports List                                      */
+/* ================================================================== */
+
+.listHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.listTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.listItem {
+    border-bottom: 1px solid #f0f0f0 !important;
+    padding: 16px 8px !important;
+}
+
+.itemDate {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.itemContent {
+    display: flex;
+    gap: 24px; /* 各データ項目間のスペース */
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.itemContent span {
+    color: #595959;
+}

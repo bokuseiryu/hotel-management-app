@@ -1,0 +1,19 @@
+{
+  "name": "hotel-management-system",
+  "version": "1.0.0",
+  "description": "Full-stack hotel management dashboard application",
+  "main": "backend/src/app.js",
+  "scripts": {
+    "start": "node backend/src/app.js",
+    "build": "cd frontend && npm install && npm run build",
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend && npm install",
+    "postinstall": "npm run install-backend && npm run install-frontend && npm run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["react", "express", "nodejs", "sqlite", "render"],
+  "author": "Hotel Management System",
+  "license": "MIT"
+}

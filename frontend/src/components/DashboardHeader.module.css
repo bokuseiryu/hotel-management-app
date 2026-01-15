@@ -1,0 +1,77 @@
+/* ================================================================== */
+/* ダッシュボードヘッダーのスタイル                                     */
+/* Styles for the Dashboard Header                                  */
+/* ================================================================== */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.headerLeft,
+.headerCenter,
+.headerRight {
+    display: flex;
+    align-items: center;
+}
+
+.headerCenter {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.dateTitle {
+    margin: 0 !important;
+    font-weight: bold;
+    font-size: 20px !important;
+    color: #262626;
+}
+
+.hotelSelector {
+    width: 250px;
+}
+
+.userProfile {
+    cursor: pointer;
+}
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        height: auto !important;
+        padding: 16px;
+    }
+
+    .headerLeft, .headerRight {
+        width: 100%;
+    }
+
+    .headerLeft {
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+
+    .headerCenter {
+        margin-bottom: 16px;
+    }
+
+    .headerRight {
+        justify-content: flex-end;
+    }
+
+    .dateTitle {
+        font-size: 18px !important;
+    }
+
+    .hotelSelector {
+        width: 100%;
+    }
+}

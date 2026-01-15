@@ -1,0 +1,28 @@
+/* ================================================================== */
+/* トレンドチャートのスタイル                                           */
+/* Styles for the Trends Chart                                      */
+/* ================================================================== */
+
+.chartCard {
+    margin-bottom: 24px;
+}
+
+.chartHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* モバイルでの折り返しに対応 */
+    gap: 16px; /* 要素間のスペース */
+}
+
+.chartTitle {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.emptyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 350px;
+}
