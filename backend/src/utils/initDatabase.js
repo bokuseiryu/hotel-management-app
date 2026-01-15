@@ -16,7 +16,7 @@ async function initializeDatabase() {
 
     try {
         // 1. SQLスクリプトの実行
-        const sqlScriptPath = path.join(__dirname, '..', '..', '..', 'database', 'init.sql');
+        const sqlScriptPath = path.join(__dirname, '..', '..', 'sql', 'init.sql');
         const sqlScript = fs.readFileSync(sqlScriptPath, 'utf8');
         
         await new Promise((resolve, reject) => {

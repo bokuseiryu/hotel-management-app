@@ -8,20 +8,13 @@ const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
 
-// Renderの永続ディスクパスとローカルパスを定義
-const RENDER_DB_PATH = '/var/data/hotel_data.db';
-const LOCAL_DB_PATH = path.join(__dirname, '..', '..', '..', 'database', 'hotel_data.db');
+// データベースパスを定義（Render無料層では永続ディスクが使えないため、プロジェクト内パスを使用）
+const dbPath = path.join(__dirname, '..', '..', 'data', 'hotel_data.db');
 
-// 環境に応じてデータベースパスを決定
-const isProduction = process.env.NODE_ENV === 'production';
-const dbPath = isProduction ? RENDER_DB_PATH : LOCAL_DB_PATH;
-
-// 本番環境の場合、データベースディレクトリが存在することを確認
-if (isProduction) {
-    const dbDir = path.dirname(dbPath);
-    if (!fs.existsSync(dbDir)) {
-        fs.mkdirSync(dbDir, { recursive: true });
-    }
+// データベースディレクトリが存在することを確認
+const dbDir = path.dirname(dbPath);
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
 }
 
 let instance = null;
