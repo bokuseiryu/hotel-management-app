@@ -14,6 +14,7 @@ import TrendsChart from '../components/TrendsChart';
 import MonthlyTrendsChart from '../components/MonthlyTrendsChart';
 import ReportsList from '../components/ReportsList';
 import AdminPanel from '../components/AdminPanel';
+import UserManagement from '../components/UserManagement';
 import styles from './DashboardPage.module.css';
 import dayjs from 'dayjs';
 
@@ -30,6 +31,7 @@ const DashboardPage = () => {
     const [selectedYear, setSelectedYear] = useState(dayjs());
     const [monthlyTrendsData, setMonthlyTrendsData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showUserManagement, setShowUserManagement] = useState(false);
 
     // データ取得関数
     const fetchData = useCallback(async () => {
@@ -77,35 +79,43 @@ const DashboardPage = () => {
             <DashboardHeader 
                 user={user} 
                 selectedHotel={selectedHotel} 
-                onHotelChange={setSelectedHotel} 
+                onHotelChange={setSelectedHotel}
+                showUserManagement={showUserManagement}
+                onToggleUserManagement={() => setShowUserManagement(!showUserManagement)}
             />
             <Layout>
-                {user.role === 'admin' && (
+                {(user.role === 'admin' || user.role === 'manager') && (
                     <Sider width={350} className={styles.sider} breakpoint="lg" collapsedWidth="0">
-                        <AdminPanel onDataUpdated={fetchData} selectedHotel={selectedHotel} />
+                        <AdminPanel onDataUpdated={fetchData} selectedHotel={selectedHotel} userRole={user.role} />
                     </Sider>
                 )}
                 <Content className={styles.content}>
-                    <SummaryCards data={summaryData} loading={loading} />
-                    <TrendsChart 
-                        data={trendsData} 
-                        metric={trendsMetric} 
-                        onMetricChange={setTrendsMetric} 
-                        loading={loading} 
-                    />
-                    <ReportsList 
-                        data={reportsData} 
-                        month={selectedMonth} 
-                        onMonthChange={setSelectedMonth} 
-                        loading={loading} 
-                        userRole={user.role}
-                    />
-                    <MonthlyTrendsChart 
-                        data={monthlyTrendsData}
-                        year={selectedYear}
-                        onYearChange={setSelectedYear}
-                        loading={loading}
-                    />
+                    {showUserManagement && user.role === 'admin' ? (
+                        <UserManagement />
+                    ) : (
+                        <>
+                            <SummaryCards data={summaryData} loading={loading} />
+                            <TrendsChart 
+                                data={trendsData} 
+                                metric={trendsMetric} 
+                                onMetricChange={setTrendsMetric} 
+                                loading={loading} 
+                            />
+                            <ReportsList 
+                                data={reportsData} 
+                                month={selectedMonth} 
+                                onMonthChange={setSelectedMonth} 
+                                loading={loading} 
+                                userRole={user.role}
+                            />
+                            <MonthlyTrendsChart 
+                                data={monthlyTrendsData}
+                                year={selectedYear}
+                                onYearChange={setSelectedYear}
+                                loading={loading}
+                            />
+                        </>
+                    )}
                 </Content>
             </Layout>
         </Layout>

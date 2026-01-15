@@ -11,9 +11,16 @@ const SummaryCards = ({ data, loading }) => {
 
     const getStatusStyle = (rate) => {
         if (rate >= 100) {
-            return { color: '#389e0d', backgroundColor: 'rgba(56, 158, 13, 0.1)' };
+            return { color: '#52c41a' };
         }
-        return { color: '#d46b08', backgroundColor: 'rgba(212, 107, 8, 0.1)' };
+        return { color: '#fa8c16' };
+    };
+
+    const getRateCardClass = (rate) => {
+        if (rate >= 100) {
+            return `${styles.summaryCard} ${styles.rateCard}`;
+        }
+        return `${styles.summaryCard} ${styles.rateCard} ${styles.rateCardWarning}`;
     };
 
     const formatRate = (rate) => `${parseFloat(rate || 0).toFixed(1)}%`;
@@ -24,57 +31,51 @@ const SummaryCards = ({ data, loading }) => {
             <Row gutter={[16, 16]}>
                 {/* 月売上目標 */}
                 <Col xs={24} sm={12} md={12} lg={6}>
-                    <Card bordered className={styles.summaryCard}>
+                    <Card bordered={false} className={`${styles.summaryCard} ${styles.targetCard}`}>
                         <Skeleton loading={loading} active paragraph={{ rows: 1 }}>
                             <Statistic
                                 title="月売上目標"
                                 value={formatCurrency(data.monthly_sales_target)}
                                 precision={0}
                                 prefix="¥"
-                                valueStyle={{ fontWeight: 'bold' }}
                             />
                         </Skeleton>
                     </Card>
                 </Col>
                 {/* 月末まで回収予定額 */}
                 <Col xs={24} sm={12} md={12} lg={6}>
-                    <Card bordered className={styles.summaryCard}>
+                    <Card bordered={false} className={`${styles.summaryCard} ${styles.revenueCard}`}>
                         <Skeleton loading={loading} active paragraph={{ rows: 1 }}>
                             <Statistic
                                 title="月末まで回収予定額"
                                 value={formatCurrency(data.projected_revenue)}
                                 precision={0}
                                 prefix="¥"
-                                valueStyle={{ fontWeight: 'bold' }}
                             />
                         </Skeleton>
                     </Card>
                 </Col>
                 {/* 達成率 */}
                 <Col xs={24} sm={12} md={12} lg={6}>
-                    <Card bordered className={`${styles.summaryCard} ${styles.rateCard}`}>
+                    <Card bordered={false} className={getRateCardClass(data.achievement_rate)}>
                         <Skeleton loading={loading} active paragraph={{ rows: 1 }}>
                             <Statistic
                                 title="達成率"
                                 value={formatRate(data.achievement_rate)}
-                                valueStyle={{
-                                    fontWeight: 'bold',
-                                    ...getStatusStyle(data.achievement_rate)
-                                }}
+                                valueStyle={getStatusStyle(data.achievement_rate)}
                             />
                         </Skeleton>
                     </Card>
                 </Col>
                 {/* 平均単価ADR */}
                 <Col xs={24} sm={12} md={12} lg={6}>
-                    <Card bordered className={styles.summaryCard}>
+                    <Card bordered={false} className={`${styles.summaryCard} ${styles.adrCard}`}>
                         <Skeleton loading={loading} active paragraph={{ rows: 1 }}>
                             <Statistic
                                 title="平均単価ADR"
                                 value={formatCurrency(data.average_daily_rate_adr)}
                                 precision={0}
                                 prefix="¥"
-                                valueStyle={{ fontWeight: 'bold' }}
                             />
                         </Skeleton>
                     </Card>

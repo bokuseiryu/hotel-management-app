@@ -18,6 +18,7 @@ require('dotenv').config();
 const dbManager = require('./utils/database');
 const authRoutes = require('../routes/auth');
 const dataRoutes = require('../routes/data');
+const usersRoutes = require('../routes/users');
 
 // データベースインスタンスの取得
 // Get database instance
@@ -56,6 +57,7 @@ app.use(express.static(frontendBuildPath));
 // Setup API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
+app.use('/api/users', usersRoutes);
 
 // すべての未定義APIルートをフロントエンドにリダイレクト
 // Redirect all undefined API routes to the frontend

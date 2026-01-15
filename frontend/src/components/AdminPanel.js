@@ -14,7 +14,7 @@ const AdminPanel = ({ selectedHotel }) => {
     const [form] = Form.useForm();
     const { apiClient } = useAuth();
     const [submitLoading, setSubmitLoading] = useState(false);
-    const [exportMonth, setExportMonth] = useState(dayjs());
+    const [exportYear, setExportYear] = useState(dayjs());
     const [exportLoading, setExportLoading] = useState(false);
     const [updatedDates, setUpdatedDates] = useState([]);
     const [pickerMonth, setPickerMonth] = useState(dayjs());
@@ -58,10 +58,10 @@ const AdminPanel = ({ selectedHotel }) => {
         }
     };
 
-    // Excelエクスポート処理
+    // Excelエクスポート処理（年次）
     const handleExport = async () => {
-        if (!exportMonth) {
-            message.warning('エクスポートする月を選択してください。');
+        if (!exportYear) {
+            message.warning('エクスポートする年を選択してください。');
             return;
         }
         setExportLoading(true);
@@ -69,7 +69,7 @@ const AdminPanel = ({ selectedHotel }) => {
             const response = await apiClient.get('/data/export', {
                 params: {
                     hotel: selectedHotel,
-                    month: exportMonth.format('YYYY-MM')
+                    year: exportYear.format('YYYY')
                 },
                 responseType: 'blob'
             });
@@ -77,7 +77,7 @@ const AdminPanel = ({ selectedHotel }) => {
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            const fileName = `月次レポート_${selectedHotel}_${exportMonth.format('YYYY-MM')}.xlsx`;
+            const fileName = `年次レポート_${selectedHotel}_${exportYear.format('YYYY')}.xlsx`;
             link.setAttribute('download', fileName);
             document.body.appendChild(link);
             link.click();
@@ -153,13 +153,13 @@ const AdminPanel = ({ selectedHotel }) => {
             <Divider />
 
             {/* Excelエクスポートフォーム */}
-            <Title level={5} style={{ marginTop: '24px' }}>月次レポートのエクスポート</Title>
+            <Title level={5} style={{ marginTop: '24px' }}>年次レポートのエクスポート</Title>
             <Form layout="vertical">
-                <Form.Item label="対象月">
+                <Form.Item label="対象年">
                     <DatePicker 
-                        picker="month"
-                        value={exportMonth}
-                        onChange={setExportMonth}
+                        picker="year"
+                        value={exportYear}
+                        onChange={setExportYear}
                         style={{ width: '100%' }}
                         allowClear={false}
                     />

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Layout, Select, Typography, Space, Dropdown, Avatar, Menu } from 'antd';
-import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
@@ -17,16 +17,25 @@ const { Header } = Layout;
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const DashboardHeader = ({ user, selectedHotel, onHotelChange }) => {
+const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagement, onToggleUserManagement }) => {
     const { logout } = useAuth();
 
-    const menu = (
-        <Menu>
-            <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={logout}>
-                サインアウト
-            </Menu.Item>
-        </Menu>
-    );
+    const menuItems = [
+        ...(user.role === 'admin' ? [{
+            key: 'userManagement',
+            icon: showUserManagement ? <DashboardOutlined /> : <SettingOutlined />,
+            label: showUserManagement ? 'ダッシュボード' : 'アカウント管理',
+            onClick: onToggleUserManagement
+        }] : []),
+        {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: 'サインアウト',
+            onClick: logout
+        }
+    ];
+
+    const menu = <Menu items={menuItems} />;
 
     return (
         <Header className={styles.header}>

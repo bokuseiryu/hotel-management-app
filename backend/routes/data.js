@@ -5,7 +5,7 @@
 
 const express = require('express');
 const dbManager = require('../src/utils/database');
-const { protect, isAdmin } = require('../middleware/authMiddleware');
+const { protect, isAdmin, isAdminOrManager } = require('../middleware/authMiddleware');
 const xlsx = require('xlsx');
 
 const router = express.Router();
@@ -96,8 +96,8 @@ router.get('/reports', protect, (req, res, next) => {
     });
 });
 
-// POST /api/data/reports - 新しい日報を作成（管理者のみ）
-router.post('/reports', protect, isAdmin, (req, res, next) => {
+// POST /api/data/reports - 新しい日報を作成（管理者または一般管理者）
+router.post('/reports', protect, isAdminOrManager, (req, res, next) => {
     const { hotel_name, date, projected_revenue, occupancy_rate_occ, cumulative_sales, average_daily_rate_adr, monthly_sales_target } = req.body;
 
     if (!hotel_name || !date || projected_revenue === undefined || occupancy_rate_occ === undefined || cumulative_sales === undefined || average_daily_rate_adr === undefined || monthly_sales_target === undefined) {
@@ -121,8 +121,8 @@ router.post('/reports', protect, isAdmin, (req, res, next) => {
     });
 });
 
-// PUT /api/data/reports/:id - 日報を更新（管理者のみ）
-router.put('/reports/:id', protect, isAdmin, (req, res, next) => {
+// PUT /api/data/reports/:id - 日報を更新（管理者または一般管理者）
+router.put('/reports/:id', protect, isAdminOrManager, (req, res, next) => {
     const { id } = req.params;
     const { projected_revenue, occupancy_rate_occ, cumulative_sales, average_daily_rate_adr, monthly_sales_target } = req.body;
 
@@ -145,37 +145,54 @@ router.put('/reports/:id', protect, isAdmin, (req, res, next) => {
     });
 });
 
-// GET /api/data/export - 月次データをExcelにエクスポート（管理者のみ）
-router.get('/export', protect, isAdmin, (req, res, next) => {
-    const { hotel, month } = req.query;
-    if (!hotel || !month) {
-        return res.status(400).json({ message: 'ホテル名と月（YYYY-MM）を指定してください。' });
+// GET /api/data/export - 年次データをExcelにエクスポート（管理者または一般管理者）
+router.get('/export', protect, isAdminOrManager, (req, res, next) => {
+    const { hotel, year } = req.query;
+    if (!hotel || !year) {
+        return res.status(400).json({ message: 'ホテル名と年（YYYY）を指定してください。' });
     }
 
-    const sql = `SELECT 
-                    date AS '日付',
-                    hotel_name AS 'ホテル名',
-                    projected_revenue AS '月末まで回収予定額',
-                    occupancy_rate_occ AS '稼働率OCC (%)',
-                    cumulative_sales AS '当月累計販売数',
-                    average_daily_rate_adr AS '平均単価ADR',
-                    monthly_sales_target AS '月売上目標',
-                    achievement_rate AS '達成率 (%)'
-                 FROM daily_reports 
-                 WHERE hotel_name = ? AND strftime('%Y-%m', date) = ? 
-                 ORDER BY date ASC`;
+    // 各月の月末データを取得するクエリ
+    const sql = `
+        WITH MonthlyLastData AS (
+            SELECT 
+                strftime('%Y-%m', date) AS month,
+                date,
+                hotel_name,
+                projected_revenue,
+                occupancy_rate_occ,
+                cumulative_sales,
+                average_daily_rate_adr,
+                monthly_sales_target,
+                achievement_rate,
+                ROW_NUMBER() OVER (PARTITION BY strftime('%Y-%m', date) ORDER BY date DESC) as rn
+            FROM daily_reports
+            WHERE hotel_name = ? AND strftime('%Y', date) = ?
+        )
+        SELECT 
+            month AS '年月',
+            hotel_name AS 'ホテル名',
+            projected_revenue AS '月末まで回収予定額',
+            occupancy_rate_occ AS '稼働率OCC (%)',
+            cumulative_sales AS '当月累計販売数',
+            average_daily_rate_adr AS '平均単価ADR',
+            monthly_sales_target AS '月売上目標',
+            ROUND(achievement_rate, 1) AS '達成率 (%)'
+        FROM MonthlyLastData
+        WHERE rn = 1
+        ORDER BY month ASC`;
 
-    db.all(sql, [hotel, month], (err, rows) => {
+    db.all(sql, [hotel, year], (err, rows) => {
         if (err) return next(err);
         if (rows.length === 0) {
-            return res.status(404).json({ message: '指定された月のデータが見つかりません。' });
+            return res.status(404).json({ message: '指定された年のデータが見つかりません。' });
         }
 
         const worksheet = xlsx.utils.json_to_sheet(rows);
         const workbook = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(workbook, worksheet, '月次レポート');
+        xlsx.utils.book_append_sheet(workbook, worksheet, '年次レポート');
 
-        const filename = `月次レポート_${hotel.replace(/\s/g, '_')}_${month}.xlsx`;
+        const filename = `年次レポート_${hotel.replace(/\s/g, '_')}_${year}.xlsx`;
         res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(filename)}`);
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         

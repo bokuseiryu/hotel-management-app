@@ -40,7 +40,7 @@ const protect = (req, res, next) => {
 };
 
 // ==================================================================
-// 管理者権限を検証するミドルウェア
+// 管理者権限を検証するミドルウェア (admin のみ)
 // Middleware to verify admin role
 // ==================================================================
 const isAdmin = (req, res, next) => {
@@ -51,4 +51,16 @@ const isAdmin = (req, res, next) => {
     }
 };
 
-module.exports = { protect, isAdmin };
+// ==================================================================
+// 管理者または一般管理者権限を検証するミドルウェア (admin または manager)
+// Middleware to verify admin or manager role
+// ==================================================================
+const isAdminOrManager = (req, res, next) => {
+    if (req.user && (req.user.role === 'admin' || req.user.role === 'manager')) {
+        next();
+    } else {
+        res.status(403).json({ message: 'アクセス権限がありません。管理者権限が必要です。' });
+    }
+};
+
+module.exports = { protect, isAdmin, isAdminOrManager };
