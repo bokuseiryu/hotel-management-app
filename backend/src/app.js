@@ -20,10 +20,29 @@ const authRoutes = require('../routes/auth');
 const dataRoutes = require('../routes/data');
 const usersRoutes = require('../routes/users');
 const { errorHandler } = require('../middleware/errorHandler');
+const User = require('../models/userModel');
 
-// データベースに接続
-// Connect to Database
-connectDB();
+// データベースに接続し、初期データを作成
+// Connect to Database and initialize data
+const initializeDatabase = async () => {
+    await connectDB();
+    
+    // ユーザーが存在しない場合、デフォルトユーザーを作成
+    // Create default users if none exist
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+        console.log('データベースが空です。デフォルトユーザーを作成中...');
+        const defaultUsers = [
+            { username: 'admin', password: 'hotel123', role: 'admin' },
+            { username: 'manager01', password: 'user123', role: 'manager' },
+            { username: 'staff01', password: 'user123', role: 'member' },
+        ];
+        await User.insertMany(defaultUsers);
+        console.log('デフォルトユーザー作成完了。');
+    }
+};
+
+initializeDatabase();
 
 // アプリケーションの初期化
 // Initialize application
