@@ -193,6 +193,8 @@ router.get('/monthly-trends', protect, async (req, res, next) => {
             {
                 $project: {
                     month: '$_id',
+                    projected_revenue: '$lastReport.projected_revenue',
+                    average_daily_rate_adr: '$lastReport.average_daily_rate_adr',
                     achievement_rate: '$lastReport.achievement_rate',
                     _id: 0
                 }
