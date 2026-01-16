@@ -52,8 +52,17 @@ router.get('/trends', protect, async (req, res, next) => {
     try {
         const trends = await DailyReport.find({ hotel_name: hotel })
             .sort({ date: 'asc' })
-            .select(`date ${metric}`);
-        res.json(trends);
+            .select(`date ${metric} monthly_sales_target`);
+        
+        // 前端期望的フォーマットに変換
+        // Convert to format expected by frontend
+        const formattedTrends = trends.map(item => ({
+            date: item.date,
+            value: item[metric],
+            target: metric === 'projected_revenue' ? item.monthly_sales_target : null
+        }));
+        
+        res.json(formattedTrends);
     } catch (error) {
         next(error);
     }
