@@ -8,7 +8,7 @@ This is a full-stack web application designed to track, manage, and visualize ke
 
 ## 技術スタック (Tech Stack)
 
-- **バックエンド (Backend):** Node.js, Express, SQLite, Socket.IO
+- **バックエンド (Backend):** Node.js, Express, MongoDB (Mongoose), Socket.IO
 - **フロントエンド (Frontend):** React, Ant Design, ECharts for React, Axios
 - **認証 (Authentication):** JWT (JSON Web Tokens) with role-based access control
 
@@ -46,20 +46,33 @@ cd ../frontend
 npm install
 ```
 
-### 3. データベースの初期化 (Database Initialization)
+### 3. 環境変数の設定 (Environment Variables)
 
-バックエンドディレクトリで、データベースを初期化するスクリプトを実行します。これにより、`database/hotel_data.db`ファイルが作成され、テーブルスキーマと初期データが設定されます。
+`backend` ディレクトリに `.env` ファイルを作成し、MongoDB Atlas の接続文字列を設定します。
 
-In the `backend` directory, run the script to initialize the database. This will create the `database/hotel_data.db` file and set up the table schema and initial data.
+Create a `.env` file in the `backend` directory and set your MongoDB Atlas connection string.
 
 ```bash
-cd ../backend
-npm run init-db
+# backend/.env
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/hotel-data?retryWrites=true&w=majority
+JWT_SECRET=your_jwt_secret_key
+PORT=3009
 ```
 
-**注意:** このコマンドは一度だけ実行してください。データベースが既に存在する場合、スクリプトは自動的に停止します。
+### 4. データの移行 (Data Migration)
 
-### 4. フロントエンドのビルド (Build the Frontend)
+初回セットアップ時、またはデータベースを初期化したい場合は、移行スクリプトを実行します。
+
+For initial setup or to reset the database, run the migration script.
+
+```bash
+cd backend
+npm run migrate
+```
+
+これにより、デフォルトユーザーとサンプルデータがMongoDBに作成されます。
+
+### 5. フロントエンドのビルド (Build the Frontend)
 
 本番環境用にフロントエンドアプリケーションをビルドします。ビルドされた静的ファイルは `frontend/build` ディレクトリに生成されます。
 
@@ -70,7 +83,7 @@ cd ../frontend
 npm run build
 ```
 
-### 5. アプリケーションの起動 (Start the Application)
+### 6. アプリケーションの起動 (Start the Application)
 
 バックエンドサーバーを起動します。これにより、APIサーバーが起動し、ビルドされたフロントエンドファイルが提供されます。
 
@@ -93,6 +106,36 @@ The server will start on port `3009` by default. Open your browser and navigate 
   - **アカウント (Username):** `admin`
   - **パスワード (Password):** `hotel123`
 
+- **マネージャー (Manager):**
+  - **アカウント (Username):** `manager01`
+  - **パスワード (Password):** `user123`
+
 - **メンバー (Member):**
   - **アカウント (Username):** `staff01`
   - **パスワード (Password):** `user123`
+
+---
+
+## Render へのデプロイ (Deployment to Render)
+
+### 環境変数 (Environment Variables)
+
+Render のダッシュボードで以下の環境変数を設定してください:
+
+| 変数名 | 値 |
+|--------|----|
+| `MONGO_URI` | MongoDB Atlas の接続文字列 |
+| `JWT_SECRET` | JWT 署名用の秘密鍵 |
+| `NODE_ENV` | `production` |
+
+### ビルドコマンド (Build Command)
+
+```bash
+npm install && npm run build
+```
+
+### 開始コマンド (Start Command)
+
+```bash
+npm start
+```

@@ -15,16 +15,15 @@ require('dotenv').config();
 
 // 内部モジュールのインポート
 // Import internal modules
-const dbManager = require('./utils/database');
+const connectDB = require('./utils/database');
 const authRoutes = require('../routes/auth');
 const dataRoutes = require('../routes/data');
 const usersRoutes = require('../routes/users');
-
-// データベースインスタンスの取得
-// Get database instance
-const dbInstance = dbManager.getInstance();
-const db = dbInstance.connection;
 const { errorHandler } = require('../middleware/errorHandler');
+
+// データベースに接続
+// Connect to Database
+connectDB();
 
 // アプリケーションの初期化
 // Initialize application
@@ -79,12 +78,6 @@ io.on('connection', (socket) => {
     });
 });
 
-// データベースの変更を監視し、クライアントに通知
-// Watch for database changes and notify clients
-dbInstance.on('update', (data) => {
-    console.log('データベースが更新されました。 Database was updated.');
-    io.emit('data-updated', data);
-});
 
 // サーバーの起動
 // Start the server
@@ -94,9 +87,9 @@ server.listen(PORT, () => {
 
 // データベース接続のクローズ処理
 // Handle closing the database connection
-process.on('SIGINT', () => {
-    dbInstance.close();
-    console.log('アプリケーションのシャットダウンにより、データベース接続がクローズされました。');
+process.on('SIGINT', async () => {
+    await mongoose.connection.close();
+    console.log('アプリケーションのシャットダウンにより、MongoDB接続がクローズされました。');
     process.exit(0);
 });
 
