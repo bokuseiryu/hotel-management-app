@@ -50,6 +50,33 @@ const initializeDatabase = async () => {
         const userCount = await User.countDocuments();
         console.log(`既存のユーザー数: ${userCount}（パスワードはハッシュ化済み）`);
     }
+    
+    // 達成率を再計算（insertManyではpre('save')フックが実行されないため）
+    // Recalculate achievement rates (insertMany doesn't trigger pre('save') hook)
+    const DailyReport = require('../models/dailyReportModel');
+    const reports = await DailyReport.find({});
+    
+    if (reports.length > 0) {
+        console.log('達成率を再計算中...');
+        let updatedCount = 0;
+        
+        for (const report of reports) {
+            const newAchievementRate = report.monthly_sales_target > 0 
+                ? (report.projected_revenue / report.monthly_sales_target) * 100 
+                : 0;
+            
+            // 達成率が異なる場合のみ更新
+            if (report.achievement_rate !== newAchievementRate) {
+                await DailyReport.findByIdAndUpdate(report._id, { 
+                    achievement_rate: newAchievementRate,
+                    updated_at: new Date()
+                });
+                updatedCount++;
+            }
+        }
+        
+        console.log(`${updatedCount}件の達成率を更新しました。`);
+    }
 };
 
 initializeDatabase();

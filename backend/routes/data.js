@@ -56,11 +56,37 @@ router.get('/trends', protect, async (req, res, next) => {
         
         // 前端期望的フォーマットに変換
         // Convert to format expected by frontend
-        const formattedTrends = trends.map(item => ({
+        let formattedTrends = trends.map(item => ({
             date: item.date,
             value: item[metric],
             target: metric === 'projected_revenue' ? item.monthly_sales_target : null
         }));
+        
+        // 空値や0をフィルタリングし、最後の有効なデータまでを表示
+        // Filter out null/0 values and show only up to last valid data
+        if (formattedTrends.length > 0) {
+            // 最後の有効なデータ（valueがnullでも0でもない）のインデックスを見つける
+            // Find index of last valid data (value is neither null nor 0)
+            let lastValidIndex = -1;
+            for (let i = formattedTrends.length - 1; i >= 0; i--) {
+                if (formattedTrends[i].value !== null && 
+                    formattedTrends[i].value !== undefined && 
+                    formattedTrends[i].value !== 0) {
+                    lastValidIndex = i;
+                    break;
+                }
+            }
+            
+            // 最後の有効なデータまでをトリム
+            // Trim up to last valid data
+            if (lastValidIndex >= 0) {
+                formattedTrends = formattedTrends.slice(0, lastValidIndex + 1);
+            } else {
+                // 有効なデータがない場合
+                // If no valid data exists
+                formattedTrends = [];
+            }
+        }
         
         res.json(formattedTrends);
     } catch (error) {
