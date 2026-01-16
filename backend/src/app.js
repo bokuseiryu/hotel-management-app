@@ -27,18 +27,28 @@ const User = require('../models/userModel');
 const initializeDatabase = async () => {
     await connectDB();
     
-    // ユーザーが存在しない場合、デフォルトユーザーを作成
-    // Create default users if none exist
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-        console.log('データベースが空です。デフォルトユーザーを作成中...');
-        const defaultUsers = [
-            { username: 'admin', password: 'hotel123', role: 'admin' },
-            { username: 'manager01', password: 'user123', role: 'manager' },
-            { username: 'staff01', password: 'user123', role: 'member' },
-        ];
-        await User.insertMany(defaultUsers);
-        console.log('デフォルトユーザー作成完了。');
+    // 既存のユーザーを確認し、パスワードがハッシュ化されていない場合は再作成
+    // Check existing users and recreate if passwords are not hashed
+    const adminUser = await User.findOne({ username: 'admin' });
+    
+    // パスワードがハッシュ化されていない場合（$2a$ または $2b$ で始まらない場合）、再作成
+    const needsReset = !adminUser || !adminUser.password.startsWith('$2');
+    
+    if (needsReset) {
+        console.log('ユーザーデータを初期化中...');
+        
+        // 既存のユーザーを削除
+        await User.deleteMany({});
+        
+        // User.create() を使用して pre('save') フックを発動させ、パスワードをハッシュ化
+        await User.create({ username: 'admin', password: 'hotel123', role: 'admin' });
+        await User.create({ username: 'manager01', password: 'user123', role: 'manager' });
+        await User.create({ username: 'staff01', password: 'user123', role: 'member' });
+        
+        console.log('デフォルトユーザー作成完了（パスワードはハッシュ化済み）。');
+    } else {
+        const userCount = await User.countDocuments();
+        console.log(`既存のユーザー数: ${userCount}（パスワードはハッシュ化済み）`);
     }
 };
 
