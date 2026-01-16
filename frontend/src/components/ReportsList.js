@@ -56,7 +56,6 @@ const ReportsList = ({ data, month, onMonthChange, loading, userRole }) => {
                         key={item.id}
                         className={styles.listItem}
                         actions={[
-                            <Text>達成率: {getRateTag(item.achievement_rate)}</Text>,
                             ...(userRole === 'admin' ? [
                                 <Button type="link" onClick={() => handleEdit(item)}>編集</Button>
                             ] : [])
