@@ -5,16 +5,14 @@
   "main": "backend/src/app.js",
   "scripts": {
     "start": "node backend/src/app.js",
-    "build": "cd frontend && npm install && npm run build",
-    "install-backend": "cd backend && npm install",
-    "install-frontend": "cd frontend && npm install",
-    "init-db": "node backend/src/utils/initDatabase.js",
-    "postinstall": "npm run install-backend && npm run install-frontend && npm run build && npm run init-db"
+    "build": "cd frontend && npm run build",
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "postinstall": "npm run install-all"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "18.x"
   },
-  "keywords": ["react", "express", "nodejs", "sqlite", "render"],
+  "keywords": ["react", "express", "nodejs", "mongodb", "render"],
   "author": "Hotel Management System",
   "license": "MIT"
 }
