@@ -241,36 +241,6 @@ router.get('/monthly-trends', protect, async (req, res, next) => {
     }
 });
 
-// GET /api/data/current-month-daily - 当月の日次データを取得
-router.get('/current-month-daily', protect, async (req, res, next) => {
-    const { hotel } = req.query;
-    if (!hotel) {
-        return res.status(400).json({ message: 'ホテル名を指定してください。' });
-    }
-
-    try {
-        const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-        const dailyData = await DailyReport.find({ 
-            hotel_name: hotel, 
-            date: { $regex: `^${currentMonth}` } 
-        })
-        .sort({ date: 'asc' })
-        .select('date projected_revenue average_daily_rate_adr occupancy_rate_occ');
-        
-        // 前端期望のフォーマットに変換
-        const formattedData = dailyData.map(item => ({
-            date: item.date,
-            projected_revenue: item.projected_revenue,
-            average_daily_rate_adr: item.average_daily_rate_adr,
-            occupancy_rate_occ: item.occupancy_rate_occ
-        }));
-        
-        res.json(formattedData);
-    } catch (error) {
-        next(error);
-    }
-});
-
 // GET /api/data/updated-dates - For AdminPanel calendar
 router.get('/updated-dates', protect, isAdminOrManager, async (req, res, next) => {
     const { hotel, month } = req.query; // YYYY-MM
