@@ -34,6 +34,7 @@ const DashboardPage = () => {
 
     // データ取得関数
     const fetchData = useCallback(async () => {
+        if (!apiClient) return;
         setLoading(true);
         try {
             const [summaryRes, trendsRes, reportsRes, monthlyTrendsRes] = await Promise.all([
@@ -56,8 +57,10 @@ const DashboardPage = () => {
 
     // 初期ロードとホテル・メトリック・月の変更時にデータを取得
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        if (user) {
+            fetchData();
+        }
+    }, [fetchData, user]);
 
     // Socket.IOによるリアルタイム更新
     useEffect(() => {
@@ -73,6 +76,12 @@ const DashboardPage = () => {
         };
     }, [fetchData]);
 
+    // ユーザーがまだロードされていない場合はローディング表示
+    // Show loading if user is not yet loaded
+    if (!user) {
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>読み込み中...</div>;
+    }
+
     return (
         <Layout className={styles.dashboardLayout}>
             <DashboardHeader 
@@ -83,13 +92,13 @@ const DashboardPage = () => {
                 onToggleUserManagement={() => setShowUserManagement(!showUserManagement)}
             />
             <Layout>
-                {(user.role === 'admin' || user.role === 'manager') && (
+                {(user?.role === 'admin' || user?.role === 'manager') && (
                     <Sider width={350} className={styles.sider} breakpoint="lg" collapsedWidth="0">
-                        <AdminPanel onDataUpdated={fetchData} selectedHotel={selectedHotel} userRole={user.role} />
+                        <AdminPanel onDataUpdated={fetchData} selectedHotel={selectedHotel} userRole={user?.role} />
                     </Sider>
                 )}
                 <Content className={styles.content}>
-                    {showUserManagement && user.role === 'admin' ? (
+                    {showUserManagement && user?.role === 'admin' ? (
                         <UserManagement />
                     ) : (
                         <>
@@ -105,7 +114,7 @@ const DashboardPage = () => {
                                 month={selectedMonth} 
                                 onMonthChange={setSelectedMonth} 
                                 loading={loading} 
-                                userRole={user.role}
+                                userRole={user?.role}
                             />
                             <MonthlyTrendsChart 
                                 data={monthlyTrendsData}
