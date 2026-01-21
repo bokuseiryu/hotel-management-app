@@ -28,6 +28,7 @@ const DashboardPage = () => {
     const [reportsData, setReportsData] = useState([]);
     const [trendsMetric, setTrendsMetric] = useState('projected_revenue'); // 'projected_revenue' or 'occupancy_rate_occ'
     const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString()); // YYYY
     const [monthlyTrendsData, setMonthlyTrendsData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showUserManagement, setShowUserManagement] = useState(false);
@@ -41,7 +42,7 @@ const DashboardPage = () => {
                 apiClient.get(`/data/summary?hotel=${selectedHotel}`),
                 apiClient.get(`/data/trends?hotel=${selectedHotel}&metric=${trendsMetric}`),
                 apiClient.get(`/data/reports?hotel=${selectedHotel}&month=${selectedMonth}`),
-                apiClient.get(`/data/current-month-daily?hotel=${selectedHotel}`)
+                apiClient.get(`/data/monthly-trends?hotel=${selectedHotel}&year=${selectedYear}`)
             ]);
             setSummaryData(summaryRes.data);
             setTrendsData(trendsRes.data);
@@ -53,7 +54,7 @@ const DashboardPage = () => {
         } finally {
             setLoading(false);
         }
-    }, [apiClient, selectedHotel, trendsMetric, selectedMonth]);
+    }, [apiClient, selectedHotel, trendsMetric, selectedMonth, selectedYear]);
 
     // 初期ロードとホテル・メトリック・月の変更時にデータを取得
     useEffect(() => {
@@ -118,6 +119,8 @@ const DashboardPage = () => {
                             />
                             <MonthlyTrendsChart 
                                 data={monthlyTrendsData}
+                                year={selectedYear}
+                                onYearChange={(date) => setSelectedYear(date ? date.format('YYYY') : new Date().getFullYear().toString())}
                                 loading={loading}
                             />
                         </>
