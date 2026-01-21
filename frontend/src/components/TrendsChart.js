@@ -9,6 +9,9 @@ import { Card, Radio, Skeleton, Empty } from 'antd';
 import styles from './TrendsChart.module.css';
 
 const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
+    // データが配列でない場合は空配列を使用
+    // Use empty array if data is not an array
+    const safeData = Array.isArray(data) ? data : [];
 
     const getChartOptions = () => {
         const isRevenueMetric = metric === 'projected_revenue';
@@ -20,7 +23,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
             series.push({
                 name: '月末まで回収予定額',
                 type: 'line',
-                data: data.map(item => item.value),
+                data: safeData.map(item => item.value),
                 smooth: true,
                 showSymbol: false,
                 itemStyle: { color: '#1890ff' },
@@ -32,7 +35,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
             series.push({
                 name: '月売上目標',
                 type: 'line',
-                data: data.map(item => item.target),
+                data: safeData.map(item => item.target),
                 smooth: true,
                 showSymbol: false,
                 lineStyle: { type: 'dashed', color: '#ff4d4f' },
@@ -43,7 +46,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
             series.push({
                 name: '稼働率OCC',
                 type: 'line',
-                data: data.map(item => item.value),
+                data: safeData.map(item => item.value),
                 smooth: true,
                 showSymbol: false,
                 itemStyle: { color: '#52c41a' },
@@ -58,7 +61,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
             legend: { top: 'top', right: '160px' },
             xAxis: {
                 type: 'category',
-                data: data.map(item => item.date),
+                data: safeData.map(item => item.date),
                 boundaryGap: false,
             },
             yAxis: {
@@ -98,7 +101,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
     return (
         <Card title={chartTitle} className={styles.chartCard}>
             <Skeleton loading={loading} active paragraph={{ rows: 6 }}>
-                {data.length > 0 ? (
+                {safeData.length > 0 ? (
                     <ReactECharts option={getChartOptions()} style={{ height: '350px' }} notMerge={true} />
                 ) : (
                     <div className={styles.emptyContainer}>

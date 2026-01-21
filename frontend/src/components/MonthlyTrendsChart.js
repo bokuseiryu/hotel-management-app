@@ -12,11 +12,18 @@ import dayjs from 'dayjs';
 const { Title } = Typography;
 
 const MonthlyTrendsChart = ({ data, year, onYearChange, loading }) => {
+    // データが配列でない場合は空配列を使用
+    // Use empty array if data is not an array
+    const safeData = Array.isArray(data) ? data : [];
 
     const getChartOptions = () => {
-        const months = data.map(item => `${parseInt(item.month, 10)}月`);
-        const revenues = data.map(item => item.projected_revenue);
-        const adrs = data.map(item => item.average_daily_rate_adr);
+        if (safeData.length === 0) {
+            return null;
+        }
+        
+        const months = safeData.map(item => `${parseInt(item.month || item.date?.slice(5, 7), 10)}月`);
+        const revenues = safeData.map(item => item.projected_revenue || 0);
+        const adrs = safeData.map(item => item.average_daily_rate_adr || 0);
 
         // データが完全に揃っていない月は表示しないというロジック
         // 最初のデータが0の場合、その月以降のデータを表示しない
