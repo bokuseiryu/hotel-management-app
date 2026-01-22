@@ -29,6 +29,17 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+// _id を id にマッピング
+// Map _id to id for frontend compatibility
+userSchema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        ret.id = ret._id.toString();
+        delete ret._id;
+    }
+});
+
 // パスワードをハッシュ化してから保存
 // Hash password before saving
 userSchema.pre('save', async function(next) {
