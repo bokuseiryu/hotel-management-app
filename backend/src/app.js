@@ -19,6 +19,7 @@ const connectDB = require('./utils/database');
 const authRoutes = require('../routes/auth');
 const dataRoutes = require('../routes/data');
 const usersRoutes = require('../routes/users');
+const targetsRoutes = require('../routes/targets');
 const { errorHandler } = require('../middleware/errorHandler');
 const User = require('../models/userModel');
 
@@ -113,6 +114,7 @@ app.use(express.static(frontendBuildPath));
 app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/targets', targetsRoutes);
 
 // すべての未定義APIルートをフロントエンドにリダイレクト
 // Redirect all undefined API routes to the frontend

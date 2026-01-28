@@ -38,13 +38,29 @@ const DashboardPage = () => {
         if (!apiClient) return;
         setLoading(true);
         try {
-            const [summaryRes, trendsRes, reportsRes, monthlyTrendsRes] = await Promise.all([
+            // 当月のYYYY-MM形式を取得
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            
+            const [summaryRes, trendsRes, reportsRes, monthlyTrendsRes, targetRes] = await Promise.all([
                 apiClient.get(`/data/summary?hotel=${selectedHotel}`),
                 apiClient.get(`/data/trends?hotel=${selectedHotel}&metric=${trendsMetric}`),
                 apiClient.get(`/data/reports?hotel=${selectedHotel}&month=${selectedMonth}`),
-                apiClient.get(`/data/monthly-trends?hotel=${selectedHotel}&year=${selectedYear}`)
+                apiClient.get(`/data/monthly-trends?hotel=${selectedHotel}&year=${selectedYear}`),
+                apiClient.get(`/targets/current?hotel=${selectedHotel}&month=${currentMonth}`)
             ]);
-            setSummaryData(summaryRes.data);
+            
+            // サマリーデータに月売上目標を追加
+            const summaryWithTarget = {
+                ...summaryRes.data,
+                monthly_sales_target: targetRes.data?.sales_target || 0
+            };
+            
+            // 達成率を再計算
+            if (summaryWithTarget.monthly_sales_target > 0 && summaryWithTarget.projected_revenue) {
+                summaryWithTarget.achievement_rate = (summaryWithTarget.projected_revenue / summaryWithTarget.monthly_sales_target) * 100;
+            }
+            
+            setSummaryData(summaryWithTarget);
             setTrendsData(trendsRes.data);
             setReportsData(reportsRes.data);
             setMonthlyTrendsData(monthlyTrendsRes.data);
@@ -91,6 +107,8 @@ const DashboardPage = () => {
                 onHotelChange={setSelectedHotel}
                 showUserManagement={showUserManagement}
                 onToggleUserManagement={() => setShowUserManagement(!showUserManagement)}
+                onRefresh={fetchData}
+                refreshLoading={loading}
             />
             <Layout>
                 {(user?.role === 'admin' || user?.role === 'manager') && (

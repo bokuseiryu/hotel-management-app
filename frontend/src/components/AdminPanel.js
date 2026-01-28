@@ -5,12 +5,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { Form, InputNumber, Button, DatePicker, message, Card, Typography, Divider } from 'antd';
+import { SettingOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
+import MonthlyTargetModal from './MonthlyTargetModal';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
 
-const AdminPanel = ({ selectedHotel }) => {
+const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
     const [form] = Form.useForm();
     const { apiClient } = useAuth();
     const [submitLoading, setSubmitLoading] = useState(false);
@@ -18,6 +20,7 @@ const AdminPanel = ({ selectedHotel }) => {
     const [exportLoading, setExportLoading] = useState(false);
     const [updatedDates, setUpdatedDates] = useState([]);
     const [pickerMonth, setPickerMonth] = useState(dayjs());
+    const [targetModalVisible, setTargetModalVisible] = useState(false);
 
     // 当月の更新済み日付を取得する
     useEffect(() => {
@@ -128,9 +131,6 @@ const AdminPanel = ({ selectedHotel }) => {
                         }}
                     />
                 </Form.Item>
-                <Form.Item name="monthly_sales_target" label="月売上目標" rules={[{ required: true, message: '月売上目標を入力してください' }]}>
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />
-                </Form.Item>
                 <Form.Item name="projected_revenue" label="月末まで回収予定額" rules={[{ required: true, message: '月末まで回収予定額を入力してください' }]}>
                     <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />
                 </Form.Item>
@@ -149,6 +149,19 @@ const AdminPanel = ({ selectedHotel }) => {
                     </Button>
                 </Form.Item>
             </Form>
+
+            <Divider />
+
+            {/* 月次売上目標設定 */}
+            <Title level={5} style={{ marginTop: '24px' }}>月次売上目標設定</Title>
+            <Button 
+                icon={<SettingOutlined />}
+                onClick={() => setTargetModalVisible(true)}
+                block
+                style={{ marginBottom: '24px' }}
+            >
+                月売上目標を設定
+            </Button>
 
             <Divider />
 
@@ -175,6 +188,14 @@ const AdminPanel = ({ selectedHotel }) => {
                     </Button>
                 </Form.Item>
             </Form>
+
+            {/* 月次売上目標設定モーダル */}
+            <MonthlyTargetModal
+                visible={targetModalVisible}
+                onClose={() => setTargetModalVisible(false)}
+                selectedHotel={selectedHotel}
+                onTargetUpdated={onDataUpdated}
+            />
         </Card>
     );
 };
