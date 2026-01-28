@@ -115,7 +115,21 @@ router.get('/reports', protect, async (req, res, next) => {
 // POST /api/data/reports - 新しい日報を作成（管理者または一般管理者）
 router.post('/reports', protect, isAdminOrManager, async (req, res, next) => {
     try {
-        const newReport = new DailyReport(req.body);
+        const reportData = { ...req.body };
+        
+        // 月売上目標が提供されていない場合、MonthlyTargetから取得
+        // If monthly_sales_target is not provided, fetch from MonthlyTarget
+        if (!reportData.monthly_sales_target || reportData.monthly_sales_target === 0) {
+            const MonthlyTarget = require('../models/monthlyTargetModel');
+            const month = reportData.date.slice(0, 7); // YYYY-MM
+            const target = await MonthlyTarget.findOne({
+                hotel_name: reportData.hotel_name,
+                month: month
+            });
+            reportData.monthly_sales_target = target ? target.sales_target : 0;
+        }
+        
+        const newReport = new DailyReport(reportData);
         const savedReport = await newReport.save(); // pre-saveフックがここで実行される
         
         // TODO: Socket.IO通知を再実装

@@ -33,7 +33,8 @@ const dailyReportSchema = new mongoose.Schema({
     },
     monthly_sales_target: {
         type: Number,
-        required: true
+        required: false,
+        default: 0
     },
     achievement_rate: {
         type: Number,
