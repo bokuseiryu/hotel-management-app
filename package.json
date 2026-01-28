@@ -12,7 +12,17 @@
   "engines": {
     "node": "18.x"
   },
-  "keywords": ["react", "express", "nodejs", "mongodb", "render"],
+  "keywords": [
+    "react",
+    "express",
+    "nodejs",
+    "mongodb",
+    "render"
+  ],
   "author": "Hotel Management System",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mongoose": "^9.1.5"
+  }
 }

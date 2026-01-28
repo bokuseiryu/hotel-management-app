@@ -20,6 +20,7 @@ const authRoutes = require('../routes/auth');
 const dataRoutes = require('../routes/data');
 const usersRoutes = require('../routes/users');
 const targetsRoutes = require('../routes/targets');
+const migrateRoutes = require('../routes/migrate');
 const { errorHandler } = require('../middleware/errorHandler');
 const User = require('../models/userModel');
 
@@ -115,6 +116,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/targets', targetsRoutes);
+app.use('/api/migrate', migrateRoutes);
 
 // すべての未定義APIルートをフロントエンドにリダイレクト
 // Redirect all undefined API routes to the frontend
