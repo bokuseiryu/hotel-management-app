@@ -21,7 +21,11 @@ const MonthlyTrendsChart = ({ data, year, onYearChange, loading }) => {
             return null;
         }
         
-        const months = safeData.map(item => `${parseInt(item.month || item.date?.slice(5, 7), 10)}月`);
+        const months = safeData.map(item => {
+            const monthStr = item.month || item.date?.slice(0, 7) || '';
+            const monthNum = parseInt(monthStr.slice(5, 7), 10);
+            return `${monthNum}月`;
+        });
         const revenues = safeData.map(item => item.projected_revenue || 0);
         const adrs = safeData.map(item => item.average_daily_rate_adr || 0);
 
