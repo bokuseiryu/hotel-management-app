@@ -10,29 +10,36 @@ const MonthlyTarget = require('../models/monthlyTargetModel');
 
 const router = express.Router();
 
-// GET /api/migrate/check-zoo-data - ホテル動物園前のデータを確認（管理者のみ）
-router.get('/check-zoo-data', protect, isAdmin, async (req, res, next) => {
+// GET /api/migrate/check-hotels-data - 両ホテルのデータを比較確認（管理者のみ）
+router.get('/check-hotels-data', protect, isAdmin, async (req, res, next) => {
     try {
-        const reports2025 = await DailyReport.find({
+        // ホテル新今宮のデータ
+        const shinimamiya2025 = await DailyReport.find({
+            hotel_name: 'ホテル新今宮',
+            date: { $regex: '^2025' }
+        }).sort({ date: 1 });
+        
+        // ホテル動物園前のデータ
+        const zoo2025 = await DailyReport.find({
             hotel_name: 'ホテル動物園前',
             date: { $regex: '^2025' }
         }).sort({ date: 1 });
         
-        const allReports = await DailyReport.find({
-            hotel_name: 'ホテル動物園前'
-        }).sort({ date: 1 });
-        
         res.json({
-            total: allReports.length,
-            year2025Count: reports2025.length,
-            year2025Data: reports2025.map(r => ({
-                date: r.date,
-                revenue: r.projected_revenue
-            })),
-            allYears: allReports.map(r => ({
-                date: r.date,
-                revenue: r.projected_revenue
-            }))
+            shinimamiya: {
+                year2025Count: shinimamiya2025.length,
+                data: shinimamiya2025.map(r => ({
+                    date: r.date,
+                    revenue: r.projected_revenue
+                }))
+            },
+            zoo: {
+                year2025Count: zoo2025.length,
+                data: zoo2025.map(r => ({
+                    date: r.date,
+                    revenue: r.projected_revenue
+                }))
+            }
         });
     } catch (error) {
         next(error);
