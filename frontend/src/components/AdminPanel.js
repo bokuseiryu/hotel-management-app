@@ -52,7 +52,13 @@ const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
             };
             await apiClient.post('/data/reports', formattedValues);
             message.success('データが正常に登録されました。');
-            form.resetFields({ date: dayjs() });
+            form.resetFields();
+            form.setFieldsValue({ date: dayjs() });
+            
+            // データ更新後にコールバックを呼び出す
+            if (onDataUpdated) {
+                onDataUpdated();
+            }
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'データの登録に失敗しました。';
             message.error(errorMessage);

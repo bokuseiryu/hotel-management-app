@@ -29,12 +29,11 @@ const MonthlyTrendsChart = ({ data, year, onYearChange, loading }) => {
         const revenues = safeData.map(item => item.projected_revenue || 0);
         const adrs = safeData.map(item => item.average_daily_rate_adr || 0);
 
-        // データが完全に揃っていない月は表示しないというロジック
-        // 最初のデータが0の場合、その月以降のデータを表示しない
-        const firstZeroIndex = revenues.findIndex((rev, index) => rev === 0 && index > 0 && revenues[index-1] !== 0);
-        const displayMonths = firstZeroIndex !== -1 ? months.slice(0, firstZeroIndex) : months;
-        const displayRevenues = firstZeroIndex !== -1 ? revenues.slice(0, firstZeroIndex) : revenues;
-        const displayAdrs = firstZeroIndex !== -1 ? adrs.slice(0, firstZeroIndex) : adrs;
+        // すべてのデータを表示（0の値も含む）
+        // Display all data including zero values
+        const displayMonths = months;
+        const displayRevenues = revenues;
+        const displayAdrs = adrs;
 
         if (displayMonths.length === 0) {
             return null; // 表示するデータがない場合はnullを返す
