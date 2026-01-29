@@ -32,11 +32,11 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
                 projected_revenue: values.projected_revenue,
                 occupancy_rate_occ: values.occupancy_rate_occ,
                 cumulative_sales: values.cumulative_sales,
-                average_daily_rate_adr: values.average_daily_rate_adr,
-                monthly_sales_target: values.monthly_sales_target
+                average_daily_rate_adr: values.average_daily_rate_adr
             });
             message.success('データが正常に更新されました。');
             onCancel(); // モーダルを閉じる
+            window.location.reload(); // ページをリロードしてデータを更新
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'データの更新に失敗しました。';
             message.error(errorMessage);
@@ -61,9 +61,6 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
             >
                 <Form.Item name="date" label="日付">
                     <DatePicker style={{ width: '100%' }} disabled />
-                </Form.Item>
-                <Form.Item name="monthly_sales_target" label="月売上目標" rules={[{ required: true, message: '月売上目標を入力してください' }]}>
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />
                 </Form.Item>
                 <Form.Item name="projected_revenue" label="月末まで回収予定額" rules={[{ required: true, message: '月末まで回収予定額を入力してください' }]}>
                     <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />

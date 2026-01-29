@@ -106,7 +106,15 @@ router.get('/reports', protect, async (req, res, next) => {
             hotel_name: hotel,
             date: { $regex: `^${month}` }
         }).sort({ date: 'desc' });
-        res.json(reports);
+        
+        // _idをidにマッピングして返す
+        // Map _id to id for frontend compatibility
+        const formattedReports = reports.map(report => ({
+            ...report.toObject(),
+            id: report._id.toString()
+        }));
+        
+        res.json(formattedReports);
     } catch (error) {
         next(error);
     }
