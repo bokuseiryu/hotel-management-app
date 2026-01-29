@@ -10,6 +10,35 @@ const MonthlyTarget = require('../models/monthlyTargetModel');
 
 const router = express.Router();
 
+// GET /api/migrate/check-zoo-data - ホテル動物園前のデータを確認（管理者のみ）
+router.get('/check-zoo-data', protect, isAdmin, async (req, res, next) => {
+    try {
+        const reports2025 = await DailyReport.find({
+            hotel_name: 'ホテル動物園前',
+            date: { $regex: '^2025' }
+        }).sort({ date: 1 });
+        
+        const allReports = await DailyReport.find({
+            hotel_name: 'ホテル動物園前'
+        }).sort({ date: 1 });
+        
+        res.json({
+            total: allReports.length,
+            year2025Count: reports2025.length,
+            year2025Data: reports2025.map(r => ({
+                date: r.date,
+                revenue: r.projected_revenue
+            })),
+            allYears: allReports.map(r => ({
+                date: r.date,
+                revenue: r.projected_revenue
+            }))
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
 // POST /api/migrate/zoo-hotel-data - ホテル動物園前の歴史データを移行（管理者のみ）
 router.post('/zoo-hotel-data', protect, isAdmin, async (req, res, next) => {
     try {
