@@ -56,6 +56,7 @@ const initializeDatabase = async () => {
     // 達成率を再計算（insertManyではpre('save')フックが実行されないため）
     // Recalculate achievement rates (insertMany doesn't trigger pre('save') hook)
     const DailyReport = require('../models/dailyReportModel');
+    const MonthlyTarget = require('../models/monthlyTargetModel');
     const reports = await DailyReport.find({});
     
     if (reports.length > 0) {
@@ -78,6 +79,76 @@ const initializeDatabase = async () => {
         }
         
         console.log(`${updatedCount}件の達成率を更新しました。`);
+    }
+    
+    // ホテル動物園前の歴史データを自動インポート
+    // Auto-import historical data for Hotel Zoo
+    console.log('ホテル動物園前のデータをチェック中...');
+    const zooReports2025 = await DailyReport.find({
+        hotel_name: 'ホテル動物園前',
+        date: { $regex: '^2025' }
+    });
+    
+    // 2025年のデータが12件未満の場合、完全なデータをインポート
+    if (zooReports2025.length < 12) {
+        console.log(`ホテル動物園前の2025年データが不完全です（${zooReports2025.length}/12件）。完全なデータをインポートします...`);
+        
+        const zooHotelData = {
+            '2023': {
+                '01': 6575322, '02': 6239913, '03': 8410000, '04': 7120000,
+                '05': 6695000, '06': 5450000, '07': 7070000, '08': 6840000,
+                '09': 6511043, '10': 6626082, '11': 6620821, '12': 6494088
+            },
+            '2024': {
+                '01': 4040960, '02': 6145913, '03': 7696000, '04': 8134000,
+                '05': 6649000, '06': 5231000, '07': 7122000, '08': 7330000,
+                '09': 6740000, '10': 8020000, '11': 8350000, '12': 8470000
+            },
+            '2025': {
+                '01': 7320000, '02': 6670000, '03': 7647000, '04': 9934000,
+                '05': 10884000, '06': 7831403, '07': 8168774, '08': 8953572,
+                '09': 12474790, '10': 11952696, '11': 8336634, '12': 6054420
+            }
+        };
+        
+        let importedCount = 0;
+        
+        for (const [year, months] of Object.entries(zooHotelData)) {
+            for (const [month, revenue] of Object.entries(months)) {
+                const lastDay = new Date(parseInt(year), parseInt(month), 0).getDate();
+                const date = `${year}-${month}-${String(lastDay).padStart(2, '0')}`;
+                
+                const existing = await DailyReport.findOne({
+                    hotel_name: 'ホテル動物園前',
+                    date: date
+                });
+                
+                if (!existing) {
+                    const monthKey = `${year}-${month}`;
+                    const target = await MonthlyTarget.findOne({
+                        hotel_name: 'ホテル動物園前',
+                        month: monthKey
+                    });
+                    const monthlySalesTarget = target ? target.sales_target : 0;
+                    
+                    await DailyReport.create({
+                        hotel_name: 'ホテル動物園前',
+                        date: date,
+                        projected_revenue: revenue,
+                        occupancy_rate_occ: 75,
+                        cumulative_sales: Math.floor(revenue / 30),
+                        average_daily_rate_adr: Math.floor(revenue / 30 / 20),
+                        monthly_sales_target: monthlySalesTarget,
+                        achievement_rate: monthlySalesTarget > 0 ? (revenue / monthlySalesTarget) * 100 : 0
+                    });
+                    importedCount++;
+                }
+            }
+        }
+        
+        console.log(`ホテル動物園前の歴史データを${importedCount}件インポートしました。`);
+    } else {
+        console.log('ホテル動物園前のデータは完全です。');
     }
 };
 
