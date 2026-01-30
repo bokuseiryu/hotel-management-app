@@ -31,9 +31,9 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
                     color: { type: 'linear', x: 0, y: 0, x2: 0, y2: 1, colorStops: [{ offset: 0, color: 'rgba(24, 144, 255, 0.3)' }, { offset: 1, color: 'rgba(24, 144, 255, 0)' }] }
                 }
             });
-            // 「月売上目標」のシリーズ
+            // 「売上目標/月」のシリーズ
             series.push({
-                name: '月売上目標',
+                name: '売上目標/月',
                 type: 'line',
                 data: safeData.map(item => item.target),
                 smooth: true,

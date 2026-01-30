@@ -37,7 +37,7 @@ router.get('/summary', protect, async (req, res, next) => {
     }
 });
 
-// GET /api/data/trends - 日次トレンドデータを取得
+// GET /api/data/trends - 日次トレンドデータを取得（当月のみ）
 router.get('/trends', protect, async (req, res, next) => {
     const { hotel, metric } = req.query;
     if (!hotel || !metric) {
@@ -50,43 +50,33 @@ router.get('/trends', protect, async (req, res, next) => {
     }
 
     try {
-        const trends = await DailyReport.find({ hotel_name: hotel })
+        // 当月のYYYY-MM形式を取得
+        const now = new Date();
+        const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        
+        // 当月のデータのみを取得
+        const trends = await DailyReport.find({ 
+            hotel_name: hotel,
+            date: { $regex: `^${currentMonth}` }
+        })
             .sort({ date: 'asc' })
             .select(`date ${metric} monthly_sales_target`);
         
-        // 前端期望的フォーマットに変換
+        // 当月の月次売上目標を取得
+        const MonthlyTarget = require('../models/monthlyTargetModel');
+        const monthlyTarget = await MonthlyTarget.findOne({
+            hotel_name: hotel,
+            month: currentMonth
+        });
+        const targetValue = monthlyTarget ? monthlyTarget.sales_target : 0;
+        
+        // 前端期望のフォーマットに変換
         // Convert to format expected by frontend
-        let formattedTrends = trends.map(item => ({
+        const formattedTrends = trends.map(item => ({
             date: item.date,
             value: item[metric],
-            target: metric === 'projected_revenue' ? item.monthly_sales_target : null
+            target: metric === 'projected_revenue' ? targetValue : null
         }));
-        
-        // 空値や0をフィルタリングし、最後の有効なデータまでを表示
-        // Filter out null/0 values and show only up to last valid data
-        if (formattedTrends.length > 0) {
-            // 最後の有効なデータ（valueがnullでも0でもない）のインデックスを見つける
-            // Find index of last valid data (value is neither null nor 0)
-            let lastValidIndex = -1;
-            for (let i = formattedTrends.length - 1; i >= 0; i--) {
-                if (formattedTrends[i].value !== null && 
-                    formattedTrends[i].value !== undefined && 
-                    formattedTrends[i].value !== 0) {
-                    lastValidIndex = i;
-                    break;
-                }
-            }
-            
-            // 最後の有効なデータまでをトリム
-            // Trim up to last valid data
-            if (lastValidIndex >= 0) {
-                formattedTrends = formattedTrends.slice(0, lastValidIndex + 1);
-            } else {
-                // 有効なデータがない場合
-                // If no valid data exists
-                formattedTrends = [];
-            }
-        }
         
         res.json(formattedTrends);
     } catch (error) {
