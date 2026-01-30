@@ -62,7 +62,7 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
                 <Form.Item name="date" label="日付">
                     <DatePicker style={{ width: '100%' }} disabled />
                 </Form.Item>
-                <Form.Item name="projected_revenue" label="月末まで回収予定額" rules={[{ required: true, message: '月末まで回収予定額を入力してください' }]}>
+                <Form.Item name="projected_revenue" label="売上実績" rules={[{ required: true, message: '売上実績を入力してください' }]}>
                     <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />
                 </Form.Item>
                 <Form.Item name="occupancy_rate_occ" label="稼働率OCC" rules={[{ required: true, message: '稼働率OCCを入力してください' }]}>

@@ -42,12 +42,12 @@ const SummaryCards = ({ data, loading }) => {
                         </Skeleton>
                     </Card>
                 </Col>
-                {/* 月末まで回収予定額 */}
+                {/* 売上実績 */}
                 <Col xs={24} sm={12} md={12} lg={6}>
                     <Card bordered={false} className={`${styles.summaryCard} ${styles.revenueCard}`}>
                         <Skeleton loading={loading} active paragraph={{ rows: 1 }}>
                             <Statistic
-                                title="月末まで回収予定額"
+                                title="売上実績"
                                 value={formatCurrency(data.projected_revenue)}
                                 precision={0}
                                 prefix="¥"

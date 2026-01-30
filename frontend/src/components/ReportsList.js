@@ -76,7 +76,7 @@ const ReportsList = ({ data, month, onMonthChange, loading, userRole }) => {
                                 header={
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <Text className={styles.itemDate}>{dayjs(item.date).format('YYYY年MM月DD日')}</Text>
-                                        {userRole === 'admin' && (
+                                        {(userRole === 'admin' || userRole === 'manager') && (
                                             <Button 
                                                 type="link" 
                                                 size="small"
@@ -93,7 +93,7 @@ const ReportsList = ({ data, month, onMonthChange, loading, userRole }) => {
                                 key={item.id || index}
                             >
                                 <div className={styles.itemContent}>
-                                    <span>月末まで回収予定額: <Text strong>¥{(item.projected_revenue || 0).toLocaleString()}</Text></span>
+                                    <span>売上実績: <Text strong>¥{(item.projected_revenue || 0).toLocaleString()}</Text></span>
                                     <span>稼働率OCC: <Text strong>{(item.occupancy_rate_occ || 0).toFixed(1)}%</Text></span>
                                     <span>平均単価ADR: <Text strong>¥{(item.average_daily_rate_adr || 0).toLocaleString()}</Text></span>
                                     <span>当月累計販売数: <Text strong>{(item.cumulative_sales || 0).toLocaleString()}</Text></span>

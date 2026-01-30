@@ -19,9 +19,9 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
         const series = [];
         
         if (isRevenueMetric) {
-            // 「月末まで回収予定額」のシリーズ
+            // 「売上実績」のシリーズ
             series.push({
-                name: '月末まで回収予定額',
+                name: '売上実績',
                 type: 'line',
                 data: safeData.map(item => item.value),
                 smooth: true,
@@ -92,7 +92,7 @@ const TrendsChart = ({ data, metric, onMetricChange, loading }) => {
         <div className={styles.chartHeader}>
             <span className={styles.chartTitle}>近30日トレンド</span>
             <Radio.Group value={metric} onChange={(e) => onMetricChange(e.target.value)} buttonStyle="solid">
-                <Radio.Button value="projected_revenue">月末まで回収予定額</Radio.Button>
+                <Radio.Button value="projected_revenue">売上実績</Radio.Button>
                 <Radio.Button value="occupancy_rate_occ">稼働率OCC</Radio.Button>
             </Radio.Group>
         </div>

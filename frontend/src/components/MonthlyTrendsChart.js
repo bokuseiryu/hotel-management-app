@@ -41,7 +41,7 @@ const MonthlyTrendsChart = ({ data, year, onYearChange, loading }) => {
 
         return {
             grid: { top: 70, right: 50, bottom: 30, left: 70 },
-            legend: { top: 'top', data: ['月末まで回収予定額', '平均単価ADR'] },
+            legend: { top: 'top', data: ['売上実績', '平均単価ADR'] },
             xAxis: {
                 type: 'category',
                 data: displayMonths,
@@ -73,7 +73,7 @@ const MonthlyTrendsChart = ({ data, year, onYearChange, loading }) => {
             },
             series: [
                 {
-                    name: '月末まで回収予定額',
+                    name: '売上実績',
                     type: 'bar',
                     data: displayRevenues,
                     itemStyle: { color: '#1890ff' }
