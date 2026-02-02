@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 const router = express.Router();
 
-// GET /api/data/summary - 主要なKPIサマリーを取得
+// GET /api/data/summary - 主要なKPIサマリーを取得（当月のみ）
 router.get('/summary', protect, async (req, res, next) => {
     const { hotel } = req.query;
     if (!hotel) {
@@ -19,18 +19,44 @@ router.get('/summary', protect, async (req, res, next) => {
     }
 
     try {
-        const latestReport = await DailyReport.findOne({ hotel_name: hotel })
-            .sort({ date: -1 });
+        // 当月のYYYY-MM形式を取得
+        const now = new Date();
+        const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        
+        // 当月の月次売上目標を取得
+        const MonthlyTarget = require('../models/monthlyTargetModel');
+        const monthlyTarget = await MonthlyTarget.findOne({
+            hotel_name: hotel,
+            month: currentMonth
+        });
+        const monthlySalesTarget = monthlyTarget ? monthlyTarget.sales_target : 0;
+        
+        // 当月の最新データを取得
+        const latestReport = await DailyReport.findOne({ 
+            hotel_name: hotel,
+            date: { $regex: `^${currentMonth}` }
+        }).sort({ date: -1 });
 
         if (latestReport) {
+            // 達成率を再計算
+            const achievementRate = monthlySalesTarget > 0 
+                ? (latestReport.projected_revenue / monthlySalesTarget) * 100 
+                : 0;
+            
             res.json({
-                monthly_sales_target: latestReport.monthly_sales_target,
+                monthly_sales_target: monthlySalesTarget,
                 projected_revenue: latestReport.projected_revenue,
-                achievement_rate: latestReport.achievement_rate,
+                achievement_rate: achievementRate,
                 average_daily_rate_adr: latestReport.average_daily_rate_adr
             });
         } else {
-            res.json({}); // データがない場合は空のオブジェクトを返す
+            // 当月のデータがない場合は月次売上目標のみ返す
+            res.json({
+                monthly_sales_target: monthlySalesTarget,
+                projected_revenue: 0,
+                achievement_rate: 0,
+                average_daily_rate_adr: 0
+            });
         }
     } catch (error) {
         next(error);
@@ -160,6 +186,29 @@ router.put('/reports/:id', protect, isAdminOrManager, async (req, res, next) => 
         // TODO: Socket.IO通知を再実装
 
         res.json(updatedReport);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// DELETE /api/data/reports/:id - 日報を削除（管理者または一般管理者）
+router.delete('/reports/:id', protect, isAdminOrManager, async (req, res, next) => {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: '無効なIDです。' });
+    }
+
+    try {
+        const report = await DailyReport.findById(id);
+        if (!report) {
+            return res.status(404).json({ message: '指定されたIDのレポートが見つかりません。' });
+        }
+
+        await DailyReport.findByIdAndDelete(id);
+
+        // TODO: Socket.IO通知を再実装
+
+        res.json({ message: 'データが正常に削除されました。' });
     } catch (error) {
         next(error);
     }

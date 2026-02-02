@@ -4,7 +4,8 @@
 // ==================================================================
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, InputNumber, DatePicker, message } from 'antd';
+import { Modal, Form, InputNumber, DatePicker, message, Popconfirm, Button } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import dayjs from 'dayjs';
 
@@ -12,6 +13,7 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
     const [form] = Form.useForm();
     const { apiClient } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     useEffect(() => {
         if (reportData) {
@@ -35,13 +37,28 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
                 average_daily_rate_adr: values.average_daily_rate_adr
             });
             message.success('データが正常に更新されました。');
-            onCancel(); // モーダルを閉じる
-            window.location.reload(); // ページをリロードしてデータを更新
+            onCancel();
+            window.location.reload();
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'データの更新に失敗しました。';
             message.error(errorMessage);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        try {
+            setDeleteLoading(true);
+            await apiClient.delete(`/data/reports/${reportData.id}`);
+            message.success('データが正常に削除されました。');
+            onCancel();
+            window.location.reload();
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || 'データの削除に失敗しました。';
+            message.error(errorMessage);
+        } finally {
+            setDeleteLoading(false);
         }
     };
 
@@ -54,6 +71,27 @@ const EditReportModal = ({ visible, onCancel, reportData }) => {
             confirmLoading={loading}
             okText="更新する"
             cancelText="キャンセル"
+            footer={[
+                <Popconfirm
+                    key="delete"
+                    title="このデータを削除しますか？"
+                    description="削除したデータは復元できません。"
+                    onConfirm={handleDelete}
+                    okText="削除"
+                    cancelText="キャンセル"
+                    okButtonProps={{ danger: true, loading: deleteLoading }}
+                >
+                    <Button danger icon={<DeleteOutlined />} loading={deleteLoading}>
+                        削除
+                    </Button>
+                </Popconfirm>,
+                <Button key="cancel" onClick={onCancel}>
+                    キャンセル
+                </Button>,
+                <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                    更新する
+                </Button>
+            ]}
         >
             <Form
                 form={form}
