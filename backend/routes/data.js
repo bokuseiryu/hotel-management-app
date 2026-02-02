@@ -11,30 +11,29 @@ const mongoose = require('mongoose');
 
 const router = express.Router();
 
-// GET /api/data/summary - 主要なKPIサマリーを取得（当月のみ）
+// GET /api/data/summary - 主要なKPIサマリーを取得（指定月のみ）
 router.get('/summary', protect, async (req, res, next) => {
-    const { hotel } = req.query;
+    const { hotel, month } = req.query;
     if (!hotel) {
         return res.status(400).json({ message: 'ホテル名を指定してください。' });
     }
 
     try {
-        // 当月のYYYY-MM形式を取得
-        const now = new Date();
-        const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        // 月が指定されていない場合は当月を使用
+        const targetMonth = month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
         
-        // 当月の月次売上目標を取得
+        // 指定月の月次売上目標を取得
         const MonthlyTarget = require('../models/monthlyTargetModel');
         const monthlyTarget = await MonthlyTarget.findOne({
             hotel_name: hotel,
-            month: currentMonth
+            month: targetMonth
         });
         const monthlySalesTarget = monthlyTarget ? monthlyTarget.sales_target : 0;
         
-        // 当月の最新データを取得
+        // 指定月の最新データを取得
         const latestReport = await DailyReport.findOne({ 
             hotel_name: hotel,
-            date: { $regex: `^${currentMonth}` }
+            date: { $regex: `^${targetMonth}` }
         }).sort({ date: -1 });
 
         if (latestReport) {
@@ -50,7 +49,7 @@ router.get('/summary', protect, async (req, res, next) => {
                 average_daily_rate_adr: latestReport.average_daily_rate_adr
             });
         } else {
-            // 当月のデータがない場合は月次売上目標のみ返す
+            // 指定月のデータがない場合は月次売上目標のみ返す
             res.json({
                 monthly_sales_target: monthlySalesTarget,
                 projected_revenue: 0,
@@ -63,9 +62,9 @@ router.get('/summary', protect, async (req, res, next) => {
     }
 });
 
-// GET /api/data/trends - 日次トレンドデータを取得（当月のみ）
+// GET /api/data/trends - 日次トレンドデータを取得（指定月のみ）
 router.get('/trends', protect, async (req, res, next) => {
-    const { hotel, metric } = req.query;
+    const { hotel, metric, month } = req.query;
     if (!hotel || !metric) {
         return res.status(400).json({ message: 'ホテル名とメトリックを指定してください。' });
     }
@@ -76,27 +75,26 @@ router.get('/trends', protect, async (req, res, next) => {
     }
 
     try {
-        // 当月のYYYY-MM形式を取得
-        const now = new Date();
-        const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        // 月が指定されていない場合は当月を使用
+        const targetMonth = month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
         
-        // 当月のデータのみを取得
+        // 指定月のデータのみを取得
         const trends = await DailyReport.find({ 
             hotel_name: hotel,
-            date: { $regex: `^${currentMonth}` }
+            date: { $regex: `^${targetMonth}` }
         })
             .sort({ date: 'asc' })
             .select(`date ${metric} monthly_sales_target`);
         
-        // 当月の月次売上目標を取得
+        // 指定月の月次売上目標を取得
         const MonthlyTarget = require('../models/monthlyTargetModel');
         const monthlyTarget = await MonthlyTarget.findOne({
             hotel_name: hotel,
-            month: currentMonth
+            month: targetMonth
         });
         const targetValue = monthlyTarget ? monthlyTarget.sales_target : 0;
         
-        // 前端期望のフォーマットに変換
+        // 前端期待のフォーマットに変換
         // Convert to format expected by frontend
         const formattedTrends = trends.map(item => ({
             date: item.date,
