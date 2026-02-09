@@ -19,6 +19,25 @@
     align-items: center;
 }
 
+.companyLogo {
+    height: 40px;
+    width: auto;
+    margin-right: 12px;
+    object-fit: contain;
+}
+
+.headerLeftText {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.companyName {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
 .headerCenter {
     flex-grow: 1;
     justify-content: center;
@@ -57,6 +76,15 @@
     .headerLeft {
         justify-content: center;
         margin-bottom: 16px;
+    }
+
+    .companyLogo {
+        height: 32px;
+        margin-right: 8px;
+    }
+
+    .companyName {
+        font-size: 10px;
     }
 
     .headerCenter {

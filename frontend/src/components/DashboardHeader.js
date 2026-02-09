@@ -40,9 +40,17 @@ const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagemen
     return (
         <Header className={styles.header}>
             <div className={styles.headerLeft}>
-                <Title level={4} className={styles.dateTitle}>
-                    {dayjs().format('YYYY年MM月DD日 (dddd)')}
-                </Title>
+                <img 
+                    src="/globallinks_logo_ol.png" 
+                    alt="㈱グローバルリンクス" 
+                    className={styles.companyLogo}
+                />
+                <div className={styles.headerLeftText}>
+                    <Text className={styles.companyName}>㈱グローバルリンクス</Text>
+                    <Title level={4} className={styles.dateTitle}>
+                        {dayjs().format('YYYY年MM月DD日 (dddd)')}
+                    </Title>
+                </div>
             </div>
             <div className={styles.headerCenter}>
                 <Space size="middle">
