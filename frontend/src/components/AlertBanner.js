@@ -9,13 +9,18 @@ import { WarningOutlined, ExclamationCircleOutlined, InfoCircleOutlined } from '
 import styles from './AlertBanner.module.css';
 
 const AlertBanner = ({ data }) => {
+    // 数据为空时的默认处理
+    if (!data || Object.keys(data).length === 0) {
+        return null;
+    }
+
     const {
-        achievement_rate,
-        predicted_achievement_rate,
-        occupancy_rate_occ,
-        average_daily_rate_adr,
-        current_day,
-        days_in_month
+        achievement_rate = 0,
+        predicted_achievement_rate = 0,
+        occupancy_rate_occ = 0,
+        average_daily_rate_adr = 0,
+        current_day = 0,
+        days_in_month = 0
     } = data;
 
     const alerts = [];

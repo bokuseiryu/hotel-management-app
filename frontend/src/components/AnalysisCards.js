@@ -9,15 +9,20 @@ import { ArrowUpOutlined, ArrowDownOutlined, RiseOutlined, WarningOutlined } fro
 import styles from './AnalysisCards.module.css';
 
 const AnalysisCards = ({ data }) => {
+    // 数据为空时的默认处理
+    if (!data || Object.keys(data).length === 0) {
+        return null;
+    }
+
     const {
         mom_change,
         yoy_change,
-        predicted_revenue,
-        prediction_confidence,
-        predicted_achievement_rate,
-        monthly_sales_target,
-        current_day,
-        days_in_month
+        predicted_revenue = 0,
+        prediction_confidence = 0,
+        predicted_achievement_rate = 0,
+        monthly_sales_target = 0,
+        current_day = 0,
+        days_in_month = 0
     } = data;
 
     // 判断趋势颜色
