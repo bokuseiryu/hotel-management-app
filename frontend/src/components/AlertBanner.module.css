@@ -1,0 +1,34 @@
+/* ================================================================== */
+/* 预警横幅のスタイル                                                  */
+/* Styles for Alert Banner                                            */
+/* ================================================================== */
+
+.alertContainer {
+    margin-bottom: 24px;
+}
+
+.alert {
+    border-radius: 8px;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 768px) {
+    .alert {
+        font-size: 13px;
+    }
+}

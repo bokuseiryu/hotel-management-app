@@ -10,6 +10,8 @@ import { io } from 'socket.io-client';
 
 import DashboardHeader from '../components/DashboardHeader';
 import SummaryCards from '../components/SummaryCards';
+import AnalysisCards from '../components/AnalysisCards';
+import AlertBanner from '../components/AlertBanner';
 import TrendsChart from '../components/TrendsChart';
 import MonthlyTrendsChart from '../components/MonthlyTrendsChart';
 import ReportsList from '../components/ReportsList';
@@ -106,7 +108,9 @@ const DashboardPage = () => {
                         <UserManagement />
                     ) : (
                         <>
+                            <AlertBanner data={summaryData} />
                             <SummaryCards data={summaryData} loading={loading} />
+                            <AnalysisCards data={summaryData} />
                             <TrendsChart 
                                 data={trendsData} 
                                 metric={trendsMetric} 

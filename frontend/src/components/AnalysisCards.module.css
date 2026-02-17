@@ -1,0 +1,55 @@
+/* ================================================================== */
+/* 分析カードのスタイル                                                */
+/* Styles for Analysis Cards                                          */
+/* ================================================================== */
+
+.analysisContainer {
+    margin-bottom: 24px;
+}
+
+.analysisCard {
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.analysisCard:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.trendText {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #8c8c8c;
+}
+
+.confidenceText {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #1890ff;
+    font-weight: 500;
+}
+
+.statusTag {
+    margin-top: 8px;
+    font-weight: 500;
+}
+
+.warningText {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #ff4d4f;
+    font-weight: 500;
+}
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 768px) {
+    .analysisCard {
+        margin-bottom: 12px;
+    }
+}

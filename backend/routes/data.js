@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 const router = express.Router();
 
-// GET /api/data/summary - 主要なKPIサマリーを取得（指定月のみ）
+// GET /api/data/summary - 主要なKPIサマリーを取得（指定月のみ）+ 同比/環比/予測分析
 router.get('/summary', protect, async (req, res, next) => {
     const { hotel, month } = req.query;
     if (!hotel) {
@@ -21,6 +21,7 @@ router.get('/summary', protect, async (req, res, next) => {
     try {
         // 月が指定されていない場合は当月を使用
         const targetMonth = month || `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`;
+        const [year, monthNum] = targetMonth.split('-').map(Number);
         
         // 指定月の月次売上目標を取得
         const MonthlyTarget = require('../models/monthlyTargetModel');
@@ -30,10 +31,31 @@ router.get('/summary', protect, async (req, res, next) => {
         });
         const monthlySalesTarget = monthlyTarget ? monthlyTarget.sales_target : 0;
         
-        // 指定月の最新データを取得
-        const latestReport = await DailyReport.findOne({ 
+        // 指定月の全データを取得（予測用）
+        const currentMonthReports = await DailyReport.find({ 
             hotel_name: hotel,
             date: { $regex: `^${targetMonth}` }
+        }).sort({ date: 'asc' });
+        
+        // 指定月の最新データを取得
+        const latestReport = currentMonthReports.length > 0 
+            ? currentMonthReports[currentMonthReports.length - 1] 
+            : null;
+
+        // 上月データ（環比用）
+        const lastMonth = monthNum === 1 
+            ? `${year - 1}-12` 
+            : `${year}-${String(monthNum - 1).padStart(2, '0')}`;
+        const lastMonthReport = await DailyReport.findOne({
+            hotel_name: hotel,
+            date: { $regex: `^${lastMonth}` }
+        }).sort({ date: -1 });
+
+        // 去年同月データ（同比用）
+        const lastYearMonth = `${year - 1}-${String(monthNum).padStart(2, '0')}`;
+        const lastYearReport = await DailyReport.findOne({
+            hotel_name: hotel,
+            date: { $regex: `^${lastYearMonth}` }
         }).sort({ date: -1 });
 
         if (latestReport) {
@@ -42,11 +64,46 @@ router.get('/summary', protect, async (req, res, next) => {
                 ? (latestReport.projected_revenue / monthlySalesTarget) * 100 
                 : 0;
             
+            // 環比計算（与上月对比）
+            const momChange = lastMonthReport && lastMonthReport.projected_revenue > 0
+                ? ((latestReport.projected_revenue - lastMonthReport.projected_revenue) / lastMonthReport.projected_revenue) * 100
+                : null;
+
+            // 同比計算（与去年同月对比）
+            const yoyChange = lastYearReport && lastYearReport.projected_revenue > 0
+                ? ((latestReport.projected_revenue - lastYearReport.projected_revenue) / lastYearReport.projected_revenue) * 100
+                : null;
+
+            // 预测月末业绩
+            let predictedRevenue = 0;
+            let predictionConfidence = 0;
+            if (currentMonthReports.length > 0) {
+                const currentDay = new Date(latestReport.date).getDate();
+                const daysInMonth = new Date(year, monthNum, 0).getDate();
+                const avgDailyRevenue = latestReport.projected_revenue / currentDay;
+                predictedRevenue = avgDailyRevenue * daysInMonth;
+                
+                // 预测置信度（数据越多越准确）
+                predictionConfidence = Math.min((currentDay / daysInMonth) * 100, 95);
+            }
+            
             res.json({
                 monthly_sales_target: monthlySalesTarget,
                 projected_revenue: latestReport.projected_revenue,
                 achievement_rate: achievementRate,
-                average_daily_rate_adr: latestReport.average_daily_rate_adr
+                average_daily_rate_adr: latestReport.average_daily_rate_adr,
+                occupancy_rate_occ: latestReport.occupancy_rate_occ,
+                // 新增：同比/環比
+                mom_change: momChange,
+                yoy_change: yoyChange,
+                // 新增：预测数据
+                predicted_revenue: Math.round(predictedRevenue),
+                prediction_confidence: Math.round(predictionConfidence),
+                predicted_achievement_rate: monthlySalesTarget > 0 
+                    ? (predictedRevenue / monthlySalesTarget) * 100 
+                    : 0,
+                current_day: new Date(latestReport.date).getDate(),
+                days_in_month: new Date(year, monthNum, 0).getDate()
             });
         } else {
             // 指定月のデータがない場合は月次売上目標のみ返す
@@ -54,7 +111,13 @@ router.get('/summary', protect, async (req, res, next) => {
                 monthly_sales_target: monthlySalesTarget,
                 projected_revenue: 0,
                 achievement_rate: 0,
-                average_daily_rate_adr: 0
+                average_daily_rate_adr: 0,
+                occupancy_rate_occ: 0,
+                mom_change: null,
+                yoy_change: null,
+                predicted_revenue: 0,
+                prediction_confidence: 0,
+                predicted_achievement_rate: 0
             });
         }
     } catch (error) {
