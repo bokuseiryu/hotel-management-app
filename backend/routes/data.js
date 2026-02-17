@@ -275,9 +275,81 @@ router.delete('/reports/:id', protect, isAdminOrManager, async (req, res, next) 
     }
 });
 
-// GET /api/data/export - 年次データをExcelにエクスポート（管理者または一般管理者）
+// POST /api/data/reports/batch - バッチインポート（管理者または一般管理者）
+router.post('/reports/batch', protect, isAdminOrManager, async (req, res, next) => {
+    try {
+        const { reports } = req.body;
+        
+        if (!reports || !Array.isArray(reports) || reports.length === 0) {
+            return res.status(400).json({ message: 'インポートするデータがありません。' });
+        }
+
+        const MonthlyTarget = require('../models/monthlyTargetModel');
+        const results = { success: 0, updated: 0, errors: [] };
+
+        for (const reportData of reports) {
+            try {
+                // 月売上目標を取得
+                if (!reportData.monthly_sales_target || reportData.monthly_sales_target === 0) {
+                    const month = reportData.date.slice(0, 7);
+                    const target = await MonthlyTarget.findOne({
+                        hotel_name: reportData.hotel_name,
+                        month: month
+                    });
+                    reportData.monthly_sales_target = target ? target.sales_target : 0;
+                }
+
+                // 既存のデータをチェック
+                const existing = await DailyReport.findOne({
+                    hotel_name: reportData.hotel_name,
+                    date: reportData.date
+                });
+
+                if (existing) {
+                    // 更新
+                    Object.assign(existing, reportData);
+                    await existing.save();
+                    results.updated++;
+                } else {
+                    // 新規作成
+                    const newReport = new DailyReport(reportData);
+                    await newReport.save();
+                    results.success++;
+                }
+            } catch (err) {
+                results.errors.push({ date: reportData.date, error: err.message });
+            }
+        }
+
+        res.json({
+            message: `インポート完了: ${results.success}件作成, ${results.updated}件更新`,
+            ...results
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+// GET /api/data/export - データをエクスポート（日付範囲対応）
 router.get('/export', protect, isAdminOrManager, async (req, res, next) => {
-    const { hotel, year } = req.query;
+    const { hotel, year, startDate, endDate } = req.query;
+    
+    // 日付範囲が指定されている場合
+    if (hotel && startDate && endDate) {
+        try {
+            const reports = await DailyReport.find({
+                hotel_name: hotel,
+                date: { $gte: startDate, $lte: endDate }
+            }).sort({ date: 1 });
+
+            res.json(reports);
+        } catch (error) {
+            next(error);
+        }
+        return;
+    }
+    
+    // 従来の年次エクスポート
     if (!hotel || !year) {
         return res.status(400).json({ message: 'ホテル名と年（YYYY）を指定してください。' });
     }

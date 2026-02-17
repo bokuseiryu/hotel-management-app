@@ -1,0 +1,18 @@
+/* ================================================================== */
+/* 待办事项提醒のスタイル                                              */
+/* Styles for Todo Reminder                                           */
+/* ================================================================== */
+
+.todoContainer {
+    margin-bottom: 16px;
+}
+
+.todoAlert {
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    .todoAlert {
+        font-size: 13px;
+    }
+}

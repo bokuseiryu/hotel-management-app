@@ -4,10 +4,12 @@
 // ==================================================================
 
 import React, { useState, useEffect } from 'react';
-import { Form, InputNumber, Button, DatePicker, message, Card, Typography, Divider } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Form, InputNumber, Button, DatePicker, message, Card, Typography, Divider, Space } from 'antd';
+import { SettingOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import MonthlyTargetModal from './MonthlyTargetModal';
+import BatchImportModal from './BatchImportModal';
+import ExportModal from './ExportModal';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -21,6 +23,8 @@ const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
     const [updatedDates, setUpdatedDates] = useState([]);
     const [pickerMonth, setPickerMonth] = useState(dayjs());
     const [targetModalVisible, setTargetModalVisible] = useState(false);
+    const [batchImportVisible, setBatchImportVisible] = useState(false);
+    const [exportModalVisible, setExportModalVisible] = useState(false);
 
     // 当月の更新済み日付を取得する
     useEffect(() => {
@@ -171,7 +175,28 @@ const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
 
             <Divider />
 
-            {/* Excelエクスポートフォーム */}
+            {/* バッチインポート・エクスポート */}
+            <Title level={5} style={{ marginTop: '24px' }}>データ管理</Title>
+            <Space direction="vertical" style={{ width: '100%' }}>
+                <Button 
+                    icon={<UploadOutlined />}
+                    onClick={() => setBatchImportVisible(true)}
+                    block
+                >
+                    バッチインポート
+                </Button>
+                <Button 
+                    icon={<DownloadOutlined />}
+                    onClick={() => setExportModalVisible(true)}
+                    block
+                >
+                    データエクスポート
+                </Button>
+            </Space>
+
+            <Divider />
+
+            {/* 年次レポートエクスポート */}
             <Title level={5} style={{ marginTop: '24px' }}>年次レポートのエクスポート</Title>
             <Form layout="vertical">
                 <Form.Item label="対象年">
@@ -201,6 +226,25 @@ const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
                 onClose={() => setTargetModalVisible(false)}
                 selectedHotel={selectedHotel}
                 onTargetUpdated={onDataUpdated}
+            />
+
+            {/* バッチインポートモーダル */}
+            <BatchImportModal
+                visible={batchImportVisible}
+                onClose={() => setBatchImportVisible(false)}
+                selectedHotel={selectedHotel}
+                onImport={async (data) => {
+                    await apiClient.post('/data/reports/batch', { reports: data });
+                    if (onDataUpdated) onDataUpdated();
+                }}
+            />
+
+            {/* エクスポートモーダル */}
+            <ExportModal
+                visible={exportModalVisible}
+                onClose={() => setExportModalVisible(false)}
+                apiClient={apiClient}
+                selectedHotel={selectedHotel}
             />
         </Card>
     );
