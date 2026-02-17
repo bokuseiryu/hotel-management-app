@@ -16,7 +16,8 @@
     "socket.io-client": "^4.7.4",
     "echarts-for-react": "^3.0.2",
     "antd": "^5.12.5",
-    "dayjs": "^1.11.10"
+    "dayjs": "^1.11.10",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
