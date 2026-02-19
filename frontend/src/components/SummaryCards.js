@@ -4,7 +4,7 @@
 // ==================================================================
 
 import React from 'react';
-import { Card, Row, Col, Statistic, Skeleton } from 'antd';
+import { Card, Row, Col, Statistic, Skeleton, Progress } from 'antd';
 import styles from './SummaryCards.module.css';
 
 const SummaryCards = ({ data, loading }) => {
@@ -81,6 +81,45 @@ const SummaryCards = ({ data, loading }) => {
                     </Card>
                 </Col>
             </Row>
+            
+            {/* 目標達成率プログレスバー */}
+            <Card bordered={false} className={styles.progressCard}>
+                <Skeleton loading={loading} active paragraph={{ rows: 2 }}>
+                    <div className={styles.progressContainer}>
+                        <div className={styles.progressHeader}>
+                            <span className={styles.progressTitle}>📊 目標達成進捗</span>
+                            <span className={styles.progressPercent}>{formatRate(data.achievement_rate)}</span>
+                        </div>
+                        <Progress
+                            percent={Math.min(parseFloat(data.achievement_rate || 0), 100)}
+                            strokeColor={{
+                                '0%': data.achievement_rate >= 100 ? '#52c41a' : '#ff7a45',
+                                '100%': data.achievement_rate >= 100 ? '#73d13d' : '#ff4d4f',
+                            }}
+                            trailColor="#f0f0f0"
+                            strokeWidth={16}
+                            showInfo={false}
+                            className={styles.progressBar}
+                        />
+                        <div className={styles.progressFooter}>
+                            <div className={styles.progressInfo}>
+                                <span className={styles.progressLabel}>実績</span>
+                                <span className={styles.progressValue}>¥{formatCurrency(data.projected_revenue).toLocaleString()}</span>
+                            </div>
+                            <div className={styles.progressInfo}>
+                                <span className={styles.progressLabel}>目標</span>
+                                <span className={styles.progressValue}>¥{formatCurrency(data.monthly_sales_target).toLocaleString()}</span>
+                            </div>
+                            {data.achievement_rate < 100 && (
+                                <div className={styles.progressInfo}>
+                                    <span className={styles.progressLabel}>差額</span>
+                                    <span className={styles.progressValueGap}>-¥{(formatCurrency(data.monthly_sales_target) - formatCurrency(data.projected_revenue)).toLocaleString()}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Skeleton>
+            </Card>
         </div>
     );
 };
