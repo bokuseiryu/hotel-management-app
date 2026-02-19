@@ -36,3 +36,64 @@
 .itemContent span {
     color: #595959;
 }
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 991px) {
+    .listHeader {
+        gap: 12px;
+    }
+
+    .listTitle {
+        font-size: 16px;
+    }
+
+    .itemContent {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .listHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .listTitle {
+        font-size: 15px;
+        width: 100%;
+    }
+
+    .itemDate {
+        font-size: 15px;
+    }
+
+    .itemContent {
+        gap: 12px;
+        flex-direction: column;
+    }
+
+    .itemContent span {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .listTitle {
+        font-size: 14px;
+    }
+
+    .itemDate {
+        font-size: 14px;
+    }
+
+    .listItem {
+        padding: 12px 4px !important;
+    }
+
+    .itemContent span {
+        font-size: 13px;
+    }
+}

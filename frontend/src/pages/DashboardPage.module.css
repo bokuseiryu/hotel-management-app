@@ -19,11 +19,53 @@
 }
 
 /* ================================================================== */
+/* モバイル用抽屉スタイル                                              */
+/* Mobile Drawer Styles                                             */
+/* ================================================================== */
+.mobileDrawer :global(.ant-drawer-body) {
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.mobileDrawer :global(.ant-drawer-header) {
+    background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
+    border-bottom: none;
+}
+
+.mobileDrawer :global(.ant-drawer-title) {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.mobileDrawer :global(.ant-drawer-close) {
+    color: #ffffff;
+}
+
+/* ================================================================== */
 /* レスポンシブデザイン (モバイルデバイス用)                            */
 /* Responsive Design (for mobile devices)                           */
 /* ================================================================== */
 @media (max-width: 991px) {
     .content {
-        padding: 16px;
+        padding: 12px;
+        padding-bottom: 80px; /* フローティングボタンのスペース確保 */
+    }
+
+    .sider {
+        display: none !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 8px;
+        padding-bottom: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: 4px;
+        padding-bottom: 80px;
     }
 }

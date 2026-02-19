@@ -62,20 +62,35 @@
 /* レスポンシブデザイン (モバイルデバイス用)                            */
 /* Responsive Design (for mobile devices)                           */
 /* ================================================================== */
+@media (max-width: 991px) {
+    .header {
+        padding: 12px 16px;
+    }
+
+    .dateTitle {
+        font-size: 18px !important;
+    }
+
+    .hotelSelector {
+        width: 200px;
+    }
+}
+
 @media (max-width: 768px) {
     .header {
         flex-direction: column;
         height: auto !important;
-        padding: 16px;
+        padding: 12px;
+        gap: 12px;
     }
 
-    .headerLeft, .headerRight {
+    .headerLeft, .headerCenter, .headerRight {
         width: 100%;
     }
 
     .headerLeft {
         justify-content: center;
-        margin-bottom: 16px;
+        margin-bottom: 0;
     }
 
     .companyLogo {
@@ -88,18 +103,48 @@
     }
 
     .headerCenter {
-        margin-bottom: 16px;
+        justify-content: center;
+        margin-bottom: 0;
     }
 
     .headerRight {
-        justify-content: flex-end;
+        justify-content: center;
     }
 
     .dateTitle {
-        font-size: 18px !important;
+        font-size: 16px !important;
+        text-align: center;
     }
 
     .hotelSelector {
         width: 100%;
+    }
+
+    .chartControls {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .companyLogo {
+        height: 28px;
+    }
+
+    .companyName {
+        font-size: 9px;
+    }
+
+    .dateTitle {
+        font-size: 14px !important;
+    }
+
+    .headerLeftText {
+        line-height: 1.1;
     }
 }

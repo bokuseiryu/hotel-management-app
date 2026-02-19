@@ -4,7 +4,8 @@
 // ==================================================================
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Layout, message } from 'antd';
+import { Layout, message, Drawer, FloatButton } from 'antd';
+import { PlusOutlined, MenuOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import { io } from 'socket.io-client';
 
@@ -35,6 +36,8 @@ const DashboardPage = () => {
     const [monthlyTrendsData, setMonthlyTrendsData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showUserManagement, setShowUserManagement] = useState(false);
+    const [drawerVisible, setDrawerVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
     // データ取得関数
     const fetchData = useCallback(async () => {
@@ -81,6 +84,20 @@ const DashboardPage = () => {
         };
     }, [fetchData]);
 
+    // ウィンドウサイズ変更の監視
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth < 992;
+            setIsMobile(mobile);
+            if (!mobile) {
+                setDrawerVisible(false);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     // ユーザーがまだロードされていない場合はローディング表示
     // Show loading if user is not yet loaded
     if (!user) {
@@ -99,7 +116,7 @@ const DashboardPage = () => {
                 refreshLoading={loading}
             />
             <Layout>
-                {(user?.role === 'admin' || user?.role === 'manager') && (
+                {(user?.role === 'admin' || user?.role === 'manager') && !isMobile && (
                     <Sider width={350} className={styles.sider} breakpoint="lg" collapsedWidth="0">
                         <AdminPanel onDataUpdated={fetchData} selectedHotel={selectedHotel} userRole={user?.role} />
                     </Sider>
@@ -141,6 +158,32 @@ const DashboardPage = () => {
                     )}
                 </Content>
             </Layout>
+
+            {/* モバイル用抽屉式メニュー */}
+            {(user?.role === 'admin' || user?.role === 'manager') && isMobile && (
+                <>
+                    <Drawer
+                        title="データ管理パネル"
+                        placement="bottom"
+                        onClose={() => setDrawerVisible(false)}
+                        open={drawerVisible}
+                        height="85vh"
+                        className={styles.mobileDrawer}
+                    >
+                        <AdminPanel onDataUpdated={() => {
+                            fetchData();
+                            setDrawerVisible(false);
+                        }} selectedHotel={selectedHotel} userRole={user?.role} />
+                    </Drawer>
+                    <FloatButton
+                        icon={<PlusOutlined />}
+                        type="primary"
+                        style={{ right: 24, bottom: 24 }}
+                        onClick={() => setDrawerVisible(true)}
+                        tooltip="データ登録"
+                    />
+                </>
+            )}
         </Layout>
     );
 };

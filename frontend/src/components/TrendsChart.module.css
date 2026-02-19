@@ -48,3 +48,67 @@
     color: #faad14;
     margin: 0 2px;
 }
+
+/* ================================================================== */
+/* レスポンシブデザイン (モバイルデバイス用)                            */
+/* Responsive Design (for mobile devices)                           */
+/* ================================================================== */
+@media (max-width: 991px) {
+    .chartCard {
+        margin-bottom: 16px;
+    }
+
+    .chartHeader {
+        gap: 12px;
+    }
+
+    .chartTitle {
+        font-size: 16px;
+    }
+
+    .emptyContainer {
+        height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chartHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .chartTitle {
+        font-size: 15px;
+        width: 100%;
+    }
+
+    .chartControls {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .emptyContainer {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chartTitle {
+        font-size: 14px;
+    }
+
+    .chartControls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .emptyContainer {
+        height: 200px;
+    }
+
+    .holidayLegend {
+        font-size: 11px;
+    }
+}

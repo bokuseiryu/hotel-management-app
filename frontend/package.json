@@ -43,5 +43,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3009"
+  "proxy": "http://localhost:3009",
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  }
 }

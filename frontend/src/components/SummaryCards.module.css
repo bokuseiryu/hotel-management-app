@@ -86,12 +86,60 @@
 }
 
 /* レスポンシブ対応 */
+@media (max-width: 991px) {
+    .summaryContainer {
+        margin-bottom: 16px;
+    }
+
+    .summaryCard {
+        height: 110px;
+    }
+    
+    .summaryCard :global(.ant-card-body) {
+        padding: 16px 20px;
+    }
+
+    .summaryCard :global(.ant-statistic-content) {
+        font-size: 26px !important;
+    }
+
+    .summaryCard :global(.ant-statistic-title) {
+        font-size: 13px;
+    }
+}
+
 @media (max-width: 768px) {
     .summaryCard {
         height: 100px;
     }
     
+    .summaryCard :global(.ant-card-body) {
+        padding: 14px 18px;
+    }
+
     .summaryCard :global(.ant-statistic-content) {
         font-size: 24px !important;
+    }
+
+    .summaryCard :global(.ant-statistic-title) {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summaryCard {
+        height: 90px;
+    }
+    
+    .summaryCard :global(.ant-card-body) {
+        padding: 12px 16px;
+    }
+
+    .summaryCard :global(.ant-statistic-content) {
+        font-size: 20px !important;
+    }
+
+    .summaryCard :global(.ant-statistic-title) {
+        font-size: 11px;
     }
 }

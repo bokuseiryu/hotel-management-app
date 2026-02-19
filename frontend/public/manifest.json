@@ -1,15 +1,31 @@
 {
-  "short_name": "ホテルデータ管理",
-  "name": "ホテル運営データ管理システム",
+  "short_name": "ホテル日報",
+  "name": "ホテル業績ダッシュボード",
+  "description": "ホテル運営の日次業績データを管理・分析するダッシュボードアプリケーション",
   "icons": [
     {
-      "src": "globallinks_logo_ol.png",
+      "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#f0f2f5"
+  "orientation": "portrait-primary",
+  "theme_color": "#1890ff",
+  "background_color": "#f0f2f5",
+  "categories": ["business", "productivity"],
+  "lang": "ja"
 }
