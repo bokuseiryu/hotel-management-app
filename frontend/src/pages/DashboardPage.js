@@ -16,7 +16,6 @@ import AlertBanner from '../components/AlertBanner';
 import TodoReminder from '../components/TodoReminder';
 import TrendsChart from '../components/TrendsChart';
 import MonthlyTrendsChart from '../components/MonthlyTrendsChart';
-import ForecastChart from '../components/ForecastChart';
 import ReportsList from '../components/ReportsList';
 import AdminPanel from '../components/AdminPanel';
 import UserManagement from '../components/UserManagement';
@@ -149,12 +148,9 @@ const DashboardPage = () => {
                                 loading={loading} 
                                 userRole={user?.role}
                             />
-                            <ForecastChart 
-                                data={summaryData}
-                                loading={loading}
-                            />
                             <MonthlyTrendsChart 
                                 data={monthlyTrendsData}
+                                forecastData={summaryData}
                                 year={selectedYear}
                                 onYearChange={(date) => setSelectedYear(date ? date.format('YYYY') : new Date().getFullYear().toString())}
                                 loading={loading}
