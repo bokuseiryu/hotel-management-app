@@ -1,0 +1,31 @@
+# ブラウザキャッシュ設定
+# Browser Cache Configuration
+
+# 静的アセット（JS/CSS）- 1年間キャッシュ
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 画像ファイル - 1年間キャッシュ
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+
+# フォントファイル - 1年間キャッシュ
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTMLファイル - キャッシュしない（常に最新を取得）
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# manifest.json - 短期キャッシュ
+/manifest.json
+  Cache-Control: public, max-age=86400

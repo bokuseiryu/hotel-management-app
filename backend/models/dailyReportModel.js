@@ -31,6 +31,38 @@ const dailyReportSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    // 翌月データ（来月の予測データ）
+    next_month_revenue: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    next_month_occupancy_rate: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    next_month_adr: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    // 翌々月データ（再来月の予測データ）
+    next_next_month_revenue: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    next_next_month_occupancy_rate: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+    next_next_month_adr: {
+        type: Number,
+        required: false,
+        default: 0
+    },
     monthly_sales_target: {
         type: Number,
         required: false,

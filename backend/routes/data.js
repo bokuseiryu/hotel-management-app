@@ -103,7 +103,14 @@ router.get('/summary', protect, async (req, res, next) => {
                     ? (predictedRevenue / monthlySalesTarget) * 100 
                     : 0,
                 current_day: new Date(latestReport.date).getDate(),
-                days_in_month: new Date(year, monthNum, 0).getDate()
+                days_in_month: new Date(year, monthNum, 0).getDate(),
+                // 翌月・翌々月予測データ
+                next_month_revenue: latestReport.next_month_revenue || 0,
+                next_month_occupancy_rate: latestReport.next_month_occupancy_rate || 0,
+                next_month_adr: latestReport.next_month_adr || 0,
+                next_next_month_revenue: latestReport.next_next_month_revenue || 0,
+                next_next_month_occupancy_rate: latestReport.next_next_month_occupancy_rate || 0,
+                next_next_month_adr: latestReport.next_next_month_adr || 0
             });
         } else {
             // 指定月のデータがない場合は月次売上目標のみ返す
@@ -117,7 +124,14 @@ router.get('/summary', protect, async (req, res, next) => {
                 yoy_change: null,
                 predicted_revenue: 0,
                 prediction_confidence: 0,
-                predicted_achievement_rate: 0
+                predicted_achievement_rate: 0,
+                // 翌月・翌々月予測データ
+                next_month_revenue: 0,
+                next_month_occupancy_rate: 0,
+                next_month_adr: 0,
+                next_next_month_revenue: 0,
+                next_next_month_occupancy_rate: 0,
+                next_next_month_adr: 0
             });
         }
     } catch (error) {
