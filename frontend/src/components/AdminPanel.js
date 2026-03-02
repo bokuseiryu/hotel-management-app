@@ -154,30 +154,6 @@ const AdminPanel = ({ selectedHotel, onDataUpdated }) => {
                     <InputNumber prefix="¥" style={{ width: '100%' }} min={0} />
                 </Form.Item>
 
-                <Divider orientation="left" style={{ fontSize: '14px', color: '#1890ff' }}>翌月予測データ</Divider>
-                
-                <Form.Item name="next_month_revenue" label="翌月回収予定額">
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} placeholder="任意" />
-                </Form.Item>
-                <Form.Item name="next_month_occupancy_rate" label="翌月稼働率">
-                    <InputNumber suffix="%" style={{ width: '100%' }} min={0} max={100} placeholder="任意" />
-                </Form.Item>
-                <Form.Item name="next_month_adr" label="翌月ADR">
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} placeholder="任意" />
-                </Form.Item>
-
-                <Divider orientation="left" style={{ fontSize: '14px', color: '#722ed1' }}>翌々月予測データ</Divider>
-                
-                <Form.Item name="next_next_month_revenue" label="翌々月回収予定額">
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} placeholder="任意" />
-                </Form.Item>
-                <Form.Item name="next_next_month_occupancy_rate" label="翌々月稼働率">
-                    <InputNumber suffix="%" style={{ width: '100%' }} min={0} max={100} placeholder="任意" />
-                </Form.Item>
-                <Form.Item name="next_next_month_adr" label="翌々月ADR">
-                    <InputNumber prefix="¥" style={{ width: '100%' }} min={0} placeholder="任意" />
-                </Form.Item>
-
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={submitLoading} block>
                         データ登録
