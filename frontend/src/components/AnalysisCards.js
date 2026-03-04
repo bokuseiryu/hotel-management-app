@@ -36,7 +36,7 @@ const AnalysisCards = ({ data }) => {
         <div className={styles.analysisContainer}>
             <Row gutter={[16, 16]}>
                 {/* 環比（与上月对比） */}
-                <Col xs={24} sm={12} lg={6}>
+                <Col xs={24} sm={12} lg={12}>
                     <Card className={styles.analysisCard}>
                         <Statistic
                             title={
@@ -57,8 +57,8 @@ const AnalysisCards = ({ data }) => {
                     </Card>
                 </Col>
 
-                {/* 同比（与去年同月对比） */}
-                <Col xs={24} sm={12} lg={6}>
+                {/* 同比（与去年同月対比） */}
+                <Col xs={24} sm={12} lg={12}>
                     <Card className={styles.analysisCard}>
                         <Statistic
                             title={
