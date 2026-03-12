@@ -21,8 +21,11 @@ export const AuthProvider = ({ children }) => {
 
     // APIクライアントの設定
     // Setup API client
+    // 本番環境ではRenderのAPIを使用、開発環境ではローカルAPIを使用
+    const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+    
     const apiClient = axios.create({
-        baseURL: '/api'
+        baseURL: API_BASE_URL
     });
 
     apiClient.interceptors.request.use(config => {

@@ -4,7 +4,7 @@
 // ==================================================================
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -12,8 +12,8 @@ import { ConfigProvider } from 'antd';
 import jaJP from 'antd/locale/ja_JP';
 
 // ==================================================================
-// プライベートルート：認証が必要なルートを保護
-// Private Route: Protects routes that require authentication
+// プライベートルート：認証が必要なルートを保護（開発時はスキップ）
+// Private Route: Protects routes that require authentication (skip during development)
 // ==================================================================
 const PrivateRoute = ({ children }) => {
     const { user, loading } = useAuth();

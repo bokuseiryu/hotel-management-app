@@ -1,0 +1,204 @@
+/* ================================================================== */
+/* 料金表コンポーネントのスタイル                                       */
+/* Styles for Price Table Component                                   */
+/* ================================================================== */
+
+.priceTableContainer {
+    padding: 0;
+    background: #fff;
+    border-radius: 8px;
+}
+
+.pageHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.pageTitle {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    color: #1a1a2e !important;
+}
+
+.filterArea {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    background: #fafafa;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #f0f0f0;
+}
+
+.priceTableCard {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+    border: 1px solid #e8e8e8;
+    margin-bottom: 16px;
+}
+
+.priceTableCard:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.cardTitle {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+}
+
+.cardMeta {
+    font-size: 12px;
+    color: #8c8c8c;
+}
+
+.tableScrollWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.priceBase {
+    font-weight: 700;
+    color: #1890ff;
+    font-size: 14px;
+}
+
+.pricePremium {
+    font-weight: 600;
+    color: #f5222d;
+    font-size: 13px;
+}
+
+.priceDiscount {
+    font-weight: 500;
+    color: #52c41a;
+    font-size: 13px;
+}
+
+.priceEmpty {
+    color: #bfbfbf;
+    font-size: 12px;
+}
+
+.taxBadge {
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #d9d9d9;
+    white-space: nowrap;
+}
+
+.roomTypeName {
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 140px;
+}
+
+.categoryTag {
+    font-size: 11px;
+    padding: 0 4px;
+    border-radius: 3px;
+    margin-left: 4px;
+}
+
+.searchBar {
+    max-width: 260px;
+}
+
+.actionArea {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.priceLegend {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #fafafa;
+    border-radius: 6px;
+    border-left: 3px solid #1890ff;
+    font-size: 12px;
+    color: #595959;
+}
+
+.formSection {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.formSectionTitle {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+}
+
+.historyTimeline {
+    padding: 8px 0;
+}
+
+.emptyHistory {
+    text-align: center;
+    padding: 24px;
+    color: #bfbfbf;
+}
+
+.starIcon {
+    color: #faad14;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.starIcon:hover {
+    transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+    .filterArea {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .actionArea {
+        width: 100%;
+    }
+
+    .searchBar {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .tableScrollWrapper {
+        margin: 0 -8px;
+        padding: 0 8px;
+    }
+}

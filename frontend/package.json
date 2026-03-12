@@ -22,6 +22,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:sakura": "cross-env REACT_APP_API_URL=https://hotel-management-app-1-xh3z.onrender.com/api REACT_APP_SOCKET_URL=https://hotel-management-app-1-xh3z.onrender.com PUBLIC_URL=/dailyreport react-scripts build",
+    "build:meeting": "cross-env REACT_APP_API_URL=https://hotel-management-app-1-xh3z.onrender.com/api REACT_APP_SOCKET_URL=https://hotel-management-app-1-xh3z.onrender.com PUBLIC_URL=/meeting react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -45,6 +47,7 @@
   },
   "proxy": "http://localhost:3009",
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "sharp": "^0.34.5"
   }
 }

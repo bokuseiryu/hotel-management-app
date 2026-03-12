@@ -21,6 +21,7 @@ const dataRoutes = require('../routes/data');
 const usersRoutes = require('../routes/users');
 const targetsRoutes = require('../routes/targets');
 const migrateRoutes = require('../routes/migrate');
+const priceTablesRoutes = require('../routes/priceTables');
 const { errorHandler } = require('../middleware/errorHandler');
 const User = require('../models/userModel');
 
@@ -188,6 +189,7 @@ app.use('/api/data', dataRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/targets', targetsRoutes);
 app.use('/api/migrate', migrateRoutes);
+app.use('/api/price-tables', priceTablesRoutes);
 
 // すべての未定義APIルートをフロントエンドにリダイレクト
 // Redirect all undefined API routes to the frontend

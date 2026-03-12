@@ -19,6 +19,7 @@ import MonthlyTrendsChart from '../components/MonthlyTrendsChart';
 import ReportsList from '../components/ReportsList';
 import AdminPanel from '../components/AdminPanel';
 import UserManagement from '../components/UserManagement';
+import PriceTable from '../components/PriceTable';
 import styles from './DashboardPage.module.css';
 import dayjs from 'dayjs';
 
@@ -36,6 +37,7 @@ const DashboardPage = () => {
     const [monthlyTrendsData, setMonthlyTrendsData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showUserManagement, setShowUserManagement] = useState(false);
+    const [showPriceTable, setShowPriceTable] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
@@ -71,8 +73,11 @@ const DashboardPage = () => {
     }, [fetchData, user]);
 
     // Socket.IOによるリアルタイム更新
+    // 本番環境ではRenderのサーバーに接続
+    const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || undefined;
+    
     useEffect(() => {
-        const socket = io(); // バックエンドサーバーに接続
+        const socket = io(SOCKET_URL); // バックエンドサーバーに接続
         socket.on('data-updated', (updateInfo) => {
             console.log('データ更新通知を受信:', updateInfo);
             message.success('データが更新されました！');
@@ -111,9 +116,17 @@ const DashboardPage = () => {
                 selectedHotel={selectedHotel} 
                 onHotelChange={setSelectedHotel}
                 showUserManagement={showUserManagement}
-                onToggleUserManagement={() => setShowUserManagement(!showUserManagement)}
+                onToggleUserManagement={() => {
+                    setShowUserManagement(!showUserManagement);
+                    setShowPriceTable(false);
+                }}
                 onRefresh={fetchData}
                 refreshLoading={loading}
+                showPriceTable={showPriceTable}
+                onTogglePriceTable={() => {
+                    setShowPriceTable(!showPriceTable);
+                    setShowUserManagement(false);
+                }}
             />
             <Layout>
                 {(user?.role === 'admin' || user?.role === 'manager') && !isMobile && (
@@ -124,6 +137,8 @@ const DashboardPage = () => {
                 <Content className={styles.content}>
                     {showUserManagement && user?.role === 'admin' ? (
                         <UserManagement />
+                    ) : showPriceTable && user?.role === 'admin' ? (
+                        <PriceTable selectedHotel={selectedHotel} />
                     ) : (
                         <>
                             <TodoReminder 

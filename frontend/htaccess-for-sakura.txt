@@ -1,0 +1,39 @@
+# ============================================================
+# さくらレンタルサーバー用 .htaccess ファイル
+# このファイルを dailyreport フォルダにアップロードし、
+# ファイル名を「.htaccess」に変更してください
+# ============================================================
+
+# React SPA用のリダイレクト設定
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /dailyreport/
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /dailyreport/index.html [L]
+</IfModule>
+
+# CORS設定（APIへのアクセス許可）
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
+
+# キャッシュ設定
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+</IfModule>
+
+# セキュリティ設定
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
