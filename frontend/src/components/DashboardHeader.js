@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Layout, Select, Typography, Space, Dropdown, Avatar, Menu, Button, Tooltip } from 'antd';
-import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, ReloadOutlined, TableOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
@@ -17,7 +17,7 @@ const { Header } = Layout;
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagement, onToggleUserManagement, onRefresh, refreshLoading, showPriceTable, onTogglePriceTable }) => {
+const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagement, onToggleUserManagement, onRefresh, refreshLoading }) => {
     const { logout } = useAuth();
 
     const menuItems = [
@@ -63,17 +63,6 @@ const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagemen
                         <Option value="ホテル新今宮">ホテル新今宮</Option>
                         <Option value="ホテル動物園前">ホテル動物園前</Option>
                     </Select>
-                    {user?.role === 'admin' && (
-                        <Tooltip title="料金表管理">
-                            <Button
-                                icon={<TableOutlined />}
-                                onClick={onTogglePriceTable}
-                                style={showPriceTable ? { borderColor: '#1890ff', color: '#1890ff' } : {}}
-                            >
-                                料金表
-                            </Button>
-                        </Tooltip>
-                    )}
                     <Tooltip title="データを更新">
                         <Button 
                             type="primary"
