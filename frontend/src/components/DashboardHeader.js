@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Layout, Select, Typography, Space, Dropdown, Avatar, Menu, Button, Tooltip } from 'antd';
-import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, ReloadOutlined } from '@ant-design/icons';
+import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, ReloadOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
@@ -16,6 +16,34 @@ dayjs.locale('ja');
 const { Header } = Layout;
 const { Title, Text } = Typography;
 const { Option } = Select;
+
+// アプリリスト定義
+const APP_LINKS = [
+    {
+        key: 'workshift',
+        href: 'https://iestate.co.jp/workshift',
+        emoji: '🗓️',
+        label: 'シフト管理',
+        color: '#1677ff',
+        bg: '#e6f4ff',
+    },
+    {
+        key: 'bbt',
+        href: 'https://iestate.co.jp/bbt',
+        emoji: '📦',
+        label: '在庫管理',
+        color: '#52c41a',
+        bg: '#f6ffed',
+    },
+    {
+        key: 'meeting',
+        href: 'https://iestate.co.jp/meeting',
+        emoji: '📋',
+        label: '月次MTG',
+        color: '#fa8c16',
+        bg: '#fff7e6',
+    },
+];
 
 const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagement, onToggleUserManagement, onRefresh, refreshLoading }) => {
     const { logout } = useAuth();
@@ -76,12 +104,46 @@ const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagemen
                 </Space>
             </div>
             <div className={styles.headerRight}>
-                <Dropdown overlay={menu} trigger={['click']}>
-                    <Space className={styles.userProfile} style={{ cursor: 'pointer' }}>
-                        <Avatar icon={<UserOutlined />} />
-                        <Text>{user.username}</Text>
-                    </Space>
-                </Dropdown>
+                <Space size="middle">
+                    <Dropdown
+                        trigger={['click']}
+                        overlay={
+                            <div className={styles.appLauncher}>
+                                <div className={styles.appLauncherTitle}>アプリ一覧</div>
+                                <div className={styles.appGrid}>
+                                    {APP_LINKS.map(app => (
+                                        <a
+                                            key={app.key}
+                                            href={app.href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={styles.appItem}
+                                            style={{ '--app-color': app.color, '--app-bg': app.bg }}
+                                        >
+                                            <span className={styles.appEmoji}>{app.emoji}</span>
+                                            <span className={styles.appLabel}>{app.label}</span>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        }
+                    >
+                        <Tooltip title="他のアプリを開く">
+                            <Button
+                                icon={<AppstoreOutlined />}
+                                className={styles.appLauncherBtn}
+                                shape="circle"
+                                size="large"
+                            />
+                        </Tooltip>
+                    </Dropdown>
+                    <Dropdown overlay={menu} trigger={['click']}>
+                        <Space className={styles.userProfile} style={{ cursor: 'pointer' }}>
+                            <Avatar icon={<UserOutlined />} />
+                            <Text>{user.username}</Text>
+                        </Space>
+                    </Dropdown>
+                </Space>
             </div>
         </Header>
     );
