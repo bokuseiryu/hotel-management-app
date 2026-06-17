@@ -28,6 +28,14 @@ router.post('/', protect, isAdmin, async (req, res, next) => {
         return res.status(400).json({ message: 'ユーザー名、パスワード、役割を入力してください。' });
     }
 
+    // ユーザー名・パスワードの長さバリデーション
+    if (username.trim().length < 3 || username.trim().length > 30) {
+        return res.status(400).json({ message: 'ユーザー名は3〜30文字で入力してください。' });
+    }
+    if (password.length < 6) {
+        return res.status(400).json({ message: 'パスワードは6文字以上で入力してください。' });
+    }
+
     try {
         const userExists = await User.findOne({ username });
         if (userExists) {
@@ -55,6 +63,14 @@ router.post('/', protect, isAdmin, async (req, res, next) => {
 router.put('/:id', protect, isAdmin, async (req, res, next) => {
     const { id } = req.params;
     const { username, password, role } = req.body;
+
+    // ユーザー名・パスワードの長さバリデーション（入力がある場合のみ）
+    if (username && (username.trim().length < 3 || username.trim().length > 30)) {
+        return res.status(400).json({ message: 'ユーザー名は3〜30文字で入力してください。' });
+    }
+    if (password && password.length < 6) {
+        return res.status(400).json({ message: 'パスワードは6文字以上で入力してください。' });
+    }
 
     try {
         const user = await User.findById(id);
@@ -126,6 +142,11 @@ router.put('/change-password/me', protect, async (req, res, next) => {
 
     if (!currentPassword || !newPassword) {
         return res.status(400).json({ message: '現在のパスワードと新しいパスワードを入力してください。' });
+    }
+
+    // 新しいパスワードの長さバリデーション
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: '新しいパスワードは6文字以上で入力してください。' });
     }
 
     try {

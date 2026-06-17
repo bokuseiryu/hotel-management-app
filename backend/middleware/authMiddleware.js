@@ -6,7 +6,12 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-very-secret-key-that-is-long-and-secure';
+// JWT秘密鍵 - 環境変数から必ず取得する（デフォルト値なし）
+if (!process.env.JWT_SECRET) {
+    console.error('致命的エラー: JWT_SECRETが設定されていません。');
+    process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // ==================================================================
 // トークンを検証するミドルウェア

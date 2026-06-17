@@ -159,9 +159,18 @@ initializeDatabase();
 // Initialize application
 const app = express();
 const server = http.createServer(app);
+// 許可するオリジンのリスト
+const ALLOWED_ORIGINS = [
+    'https://iestate.co.jp',
+    'https://www.iestate.co.jp',
+    'https://hotel-management-app-1-xh3z.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:3009'
+];
+
 const io = new Server(server, {
     cors: {
-        origin: "*", // 本番環境では特定のオリジンに制限してください (Restrict to specific origin in production)
+        origin: ALLOWED_ORIGINS,
         methods: ["GET", "POST", "PUT", "DELETE"]
     }
 });
@@ -170,9 +179,24 @@ const io = new Server(server, {
 // Set constants
 const PORT = process.env.PORT || 3009;
 
+// CORSオプションの設定 - 許可するオリジンのみ受け入れる
+const corsOptions = {
+    origin: (origin, callback) => {
+        // オリジンがない場合（同一オリジンリクエスト）または許可リストにある場合は許可
+        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORSポリシーによりアクセスが拒否されました。'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
 // ミドルウェアの設定
 // Setup middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -4,6 +4,7 @@
 // ==================================================================
 
 import React from 'react';
+import { CalendarDays, Package, Users } from 'lucide-react';
 import { Layout, Select, Typography, Space, Dropdown, Avatar, Menu, Button, Tooltip } from 'antd';
 import { LogoutOutlined, UserOutlined, SettingOutlined, DashboardOutlined, ReloadOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useAuth } from '../hooks/useAuth';
@@ -22,7 +23,7 @@ const APP_LINKS = [
     {
         key: 'workshift',
         href: 'https://iestate.co.jp/workshift',
-        emoji: '🗓️',
+        icon: CalendarDays,
         label: 'シフト管理',
         color: '#1677ff',
         bg: '#e6f4ff',
@@ -30,7 +31,7 @@ const APP_LINKS = [
     {
         key: 'bbt',
         href: 'https://iestate.co.jp/bbt',
-        emoji: '📦',
+        icon: Package,
         label: '在庫管理',
         color: '#52c41a',
         bg: '#f6ffed',
@@ -38,10 +39,10 @@ const APP_LINKS = [
     {
         key: 'meeting',
         href: 'https://iestate.co.jp/meeting',
-        emoji: '📋',
+        icon: Users,
         label: '月次MTG',
-        color: '#fa8c16',
-        bg: '#fff7e6',
+        color: '#722ed1',
+        bg: '#f9f0ff',
     },
 ];
 
@@ -120,7 +121,7 @@ const DashboardHeader = ({ user, selectedHotel, onHotelChange, showUserManagemen
                                             className={styles.appItem}
                                             style={{ '--app-color': app.color, '--app-bg': app.bg }}
                                         >
-                                            <span className={styles.appEmoji}>{app.emoji}</span>
+                                            <app.icon size={20} style={{ color: app.color }} className={styles.appEmoji} />
                                             <span className={styles.appLabel}>{app.label}</span>
                                         </a>
                                     ))}
